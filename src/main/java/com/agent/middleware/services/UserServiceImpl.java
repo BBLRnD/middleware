@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.rmi.NoSuchObjectException;
 import java.util.List;
 
 @Service
@@ -87,6 +88,10 @@ public class UserServiceImpl implements UserService {
         }.getType();
         List<UserResponseDto> userResponses = modelMapper.map(users, setOfDTOsType);
         return userResponses;
+    }
+
+    public UserInfo getUserById(Long id){
+        return userRepository.findById(id).orElseThrow(() -> new SecurityException("User Not Found"));
     }
 
 
