@@ -1,6 +1,7 @@
 package com.agent.middleware.services;
 
 import com.agent.middleware.models.RefreshToken;
+import com.agent.middleware.models.UserInfo;
 import com.agent.middleware.repositories.RefreshTokenRepository;
 import com.agent.middleware.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,9 @@ public class RefreshTokenService {
     UserRepository userRepository;
 
     public RefreshToken createRefreshToken(String username){
+        UserInfo userInfo = userRepository.findByUsername(username);
         RefreshToken refreshToken = RefreshToken.builder()
-                .userInfo(userRepository.findByUsername(username))
+                .userId(userInfo.getId())
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusMillis(600000))
                 .build();
@@ -30,8 +32,8 @@ public class RefreshTokenService {
 
 
 
-    public Optional<RefreshToken> findByToken(String token){
-        return refreshTokenRepository.findByToken(token);
+    public RefreshToken findByToken(String token){
+        return refreshTokenRepository.findByToken(token).orElseThrow(()-> new SecurityException("Invalid Refresh Token"));
     }
 
     public RefreshToken verifyExpiration(RefreshToken token){
