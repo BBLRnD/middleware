@@ -6,6 +6,7 @@ import com.agent.middleware.models.UserInfo;
 import com.agent.middleware.services.JwtService;
 import com.agent.middleware.services.RefreshTokenService;
 import com.agent.middleware.services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -101,6 +102,13 @@ public class UserController {
         return JwtResponseDto.builder()
                 .jwtToken(accessToken)
                 .refreshToken(refreshTokenRequestDTO.getRefreshToken()).build();
+    }
+
+    @PostMapping("/revoke-token")
+    public HttpStatus revokeToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
+        RefreshToken refreshToken =  refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
+        refreshTokenService.deleteRefreshToken(refreshToken);
+        return HttpStatus.OK;
     }
 
 }
