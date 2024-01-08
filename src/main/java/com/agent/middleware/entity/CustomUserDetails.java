@@ -1,32 +1,37 @@
-package com.agent.middleware.helpers;
+package com.agent.middleware.entity;
 
 
-import com.agent.middleware.models.UserInfo;
-import com.agent.middleware.models.UserRole;
+import com.agent.middleware.repository.RoleRepository;
+import com.agent.middleware.repository.UserRoleRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CustomUserDetails extends UserInfo implements UserDetails {
 
     private String username;
     private String password;
     Collection<? extends GrantedAuthority> authorities;
+    private final UserRoleRepository userRoleRepository;
+    private final RoleRepository roleRepository;
 
-    public CustomUserDetails(UserInfo byUsername) {
+    public CustomUserDetails(UserInfo byUsername, UserRoleRepository userRoleRepository, RoleRepository roleRepository, long userId) {
         this.username = byUsername.getUsername();
         this.password = byUsername.getPassword();
-        List<GrantedAuthority> auths = new ArrayList<>();
+        this.userRoleRepository = userRoleRepository;
+        this.roleRepository = roleRepository;
 
-        for (UserRole role : byUsername.getRoles()) {
-
-            auths.add(new SimpleGrantedAuthority(role.getName().toUpperCase()));
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        List<UserRole> userRoleList = this.userRoleRepository.findAllByUserId(userId).orElse(new ArrayList<>());
+        if (userRoleList.size() > 0) {
+            userRoleList.forEach(u -> {
+                Role role = this.roleRepository.findById(u.getId()).orElseThrow(() -> new RuntimeException("Role missing"));
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+            });
         }
-        this.authorities = auths;
+        this.authorities = authorities;
     }
 
     @Override

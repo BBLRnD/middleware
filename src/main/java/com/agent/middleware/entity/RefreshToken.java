@@ -1,4 +1,4 @@
-package com.agent.middleware.models;
+package com.agent.middleware.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,9 @@ import java.time.Instant;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@AllArgsConstructor
 @Table(name = "REFRESH_TOKENS")
 public class RefreshToken {
 
@@ -20,8 +20,6 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String token;
-
     private Instant expiryDate;
-
     private Long userId;
 }
