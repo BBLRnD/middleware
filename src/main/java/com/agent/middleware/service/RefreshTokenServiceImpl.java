@@ -1,30 +1,34 @@
-package com.agent.middleware.services;
+package com.agent.middleware.service;
 
-import com.agent.middleware.models.RefreshToken;
-import com.agent.middleware.models.UserInfo;
-import com.agent.middleware.repositories.RefreshTokenRepository;
-import com.agent.middleware.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.agent.middleware.entity.RefreshToken;
+import com.agent.middleware.entity.UserInfo;
+import com.agent.middleware.repository.RefreshTokenRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Service
-public class RefreshTokenService {
+public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    @Autowired
-    RefreshTokenRepository refreshTokenRepository;
+    @Value("${refresh.token.validity}")
+    private long REFRESH_TOKEN_VALIDITY;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserService userService;
+
+    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, UserService userService) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userService = userService;
+    }
 
     public RefreshToken createRefreshToken(String username) {
-        UserInfo userInfo = userRepository.findByUsername(username);
+        UserInfo userInfo = (UserInfo) userService.loadUserByUsername(username);
         RefreshToken refreshToken = RefreshToken.builder()
                 .userId(userInfo.getId())
                 .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(600000))
+                .expiryDate(Instant.now().plusMillis(REFRESH_TOKEN_VALIDITY))
                 .build();
         return refreshTokenRepository.save(refreshToken);
     }

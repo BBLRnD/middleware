@@ -1,16 +1,17 @@
-package com.agent.middleware.dtos;
+package com.agent.middleware.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class AuthRequestDto {
-
+@ToString
+public class UserLoginDto {
     private String username;
     private String password;
+
+
 }
