@@ -3,6 +3,7 @@ package com.agent.middleware.service;
 import com.agent.middleware.dto.UserRegisterDto;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
+import com.agent.middleware.enums.UserType;
 import com.agent.middleware.repository.RoleRepository;
 import com.agent.middleware.repository.UserRepository;
 import com.agent.middleware.repository.UserRoleRepository;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
         userInfo.setFullName(userRequest.getFullName());
         userInfo.setUsername(userRequest.getUsername());
         userInfo.setPassword(encodedPassword);
+        userInfo.setUserType(UserType.valueOf(userRequest.getUserType()).name());
         userRepository.save(userInfo);
     }
 

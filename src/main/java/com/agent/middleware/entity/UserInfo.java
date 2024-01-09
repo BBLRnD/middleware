@@ -25,6 +25,7 @@ public class UserInfo implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
+    private String userType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
