@@ -39,13 +39,13 @@ public class UserRestController {
     }
 
 
-    @PostMapping(value = "/register")
+    @PostMapping(value = "/public/register")
     public HttpStatus register(@RequestBody UserRegisterDto userRequestDto) {
         userService.register(userRequestDto);
         return HttpStatus.OK;
     }
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/public/login")
     public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
                 userLoginDto.getPassword()));
@@ -64,7 +64,7 @@ public class UserRestController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/refresh-token")
+    @PostMapping("/user/refresh-token")
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
         RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
         refreshTokenService.verifyExpiration(refreshToken);
@@ -76,7 +76,8 @@ public class UserRestController {
         return jwtResponseDto;
     }
 
-    @PostMapping("/revoke-token")
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/user/revoke-token")
     public HttpStatus revokeToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
         RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
         refreshTokenService.deleteRefreshToken(refreshToken);

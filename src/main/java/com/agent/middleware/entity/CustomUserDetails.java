@@ -13,6 +13,7 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
 
     private String username;
     private String password;
+    private String userType;
     Collection<? extends GrantedAuthority> authorities;
     private final UserRoleRepository userRoleRepository;
     private final RoleRepository roleRepository;
@@ -20,6 +21,7 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     public CustomUserDetails(UserInfo byUsername, UserRoleRepository userRoleRepository, RoleRepository roleRepository, long userId) {
         this.username = byUsername.getUsername();
         this.password = byUsername.getPassword();
+        this.userType = byUsername.getUserType();
         this.userRoleRepository = userRoleRepository;
         this.roleRepository = roleRepository;
 
