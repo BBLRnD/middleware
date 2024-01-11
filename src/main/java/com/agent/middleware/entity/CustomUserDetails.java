@@ -13,7 +13,8 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
 
     private String username;
     private String password;
-    private String userType;
+    private String modules;
+    private String fullName;
     Collection<? extends GrantedAuthority> authorities;
     private final UserRoleRepository userRoleRepository;
     private final RoleRepository roleRepository;
@@ -21,7 +22,8 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     public CustomUserDetails(UserInfo byUsername, UserRoleRepository userRoleRepository, RoleRepository roleRepository, long userId) {
         this.username = byUsername.getUsername();
         this.password = byUsername.getPassword();
-        this.userType = byUsername.getUserType();
+        this.modules = byUsername.getModules();
+        this.fullName = byUsername.getFullName();
         this.userRoleRepository = userRoleRepository;
         this.roleRepository = roleRepository;
 
@@ -51,6 +53,15 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
         return username;
     }
 
+    @Override
+    public String getModules() {
+        return modules;
+    }
+
+    @Override
+    public String getFullName() {
+        return fullName;
+    }
     @Override
     public boolean isAccountNonExpired() {
         return true;

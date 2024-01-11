@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,6 +15,5 @@ public class UserRegisterDto {
     private String fullName;
     private String username;
     private String password;
-    private String userType;
-
+    private Set<String> modules;
 }

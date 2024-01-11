@@ -6,8 +6,13 @@ import com.agent.middleware.dto.RefreshTokenRequestDto;
 import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.dto.UserRegisterDto;
 import com.agent.middleware.entity.RefreshToken;
+import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,23 +45,27 @@ public class UserRestController {
 
 
     @PostMapping(value = "/public/register")
+    @SneakyThrows
     public HttpStatus register(@RequestBody UserRegisterDto userRequestDto) {
         userService.register(userRequestDto);
         return HttpStatus.OK;
     }
 
     @PostMapping(value = "/public/login")
-    public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) {
+    public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) throws JsonProcessingException {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
                 userLoginDto.getPassword()));
         if (authentication.isAuthenticated()) {
-            System.out.println("Authenticated");
             SecurityContextHolder.getContext().setAuthentication(authentication);
             final String jwtToken = jwtTokenProvider.generateToken(authentication);
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(userLoginDto.getUsername());
             JwtResponseDto jwtResponseDto = new JwtResponseDto();
             jwtResponseDto.setJwtToken(jwtToken);
             jwtResponseDto.setRefreshToken(refreshToken.getToken());
+            UserInfo userInfo = (UserInfo) authentication.getPrincipal();
+            jwtResponseDto.setFullName(userInfo.getFullName());
+            jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {
+            }));
             return jwtResponseDto;
         } else {
             throw new UsernameNotFoundException("invalid user request..!!");
@@ -73,6 +82,8 @@ public class UserRestController {
         JwtResponseDto jwtResponseDto = new JwtResponseDto();
         jwtResponseDto.setJwtToken(jwtToken);
         jwtResponseDto.setRefreshToken(refreshToken.getToken());
+        UserInfo userInfo = (UserInfo) authentication.getPrincipal();
+        jwtResponseDto.setFullName(userInfo.getFullName());
         return jwtResponseDto;
     }
 

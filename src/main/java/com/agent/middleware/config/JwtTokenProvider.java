@@ -1,5 +1,6 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider implements Serializable {
+    private final UserService userService;
 
     @Value("${jwt.token.validity}")
     public long JWT_TOKEN_VALIDITY;
@@ -32,6 +34,10 @@ public class JwtTokenProvider implements Serializable {
 
     @Value("${jwt.authorities.key}")
     public String AUTHORITIES_KEY;
+
+    public JwtTokenProvider(UserService userService) {
+        this.userService = userService;
+    }
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
