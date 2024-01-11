@@ -2,7 +2,8 @@ package com.agent.middleware.controller;
 
 
 import com.agent.middleware.dto.menu.MenuDto;
-import com.agent.middleware.enums.UserType;
+import com.agent.middleware.dto.menu.MenuResponseDto;
+import com.agent.middleware.enums.Module;
 import com.agent.middleware.service.MenuService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,8 +30,16 @@ public class MenuRestController {
 
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/menu/{userType}")
-    public List<MenuDto> getByUserType(@PathVariable("userType") UserType userType) {
-        return menuService.getAllByUserType(userType);
+    @GetMapping("/menu/{module}")
+    public MenuResponseDto getByUserType(@PathVariable("module") String modulePath) {
+        Module module = Module.getModuleByPath(modulePath);
+        List<MenuDto> layerZero = menuService.getAllByUserTypeAndLayer(module, 0);
+        List<MenuDto> layerOne = menuService.getAllByUserTypeAndLayer(module, 1);
+        List<MenuDto> layerTwo = menuService.getAllByUserTypeAndLayer(module, 2);
+        MenuResponseDto menuResponseDto = new MenuResponseDto();
+        menuResponseDto.setLayerZero(layerZero);
+        menuResponseDto.setLayerOne(layerOne);
+        menuResponseDto.setLayerTwo(layerTwo);
+        return menuResponseDto;
     }
 }

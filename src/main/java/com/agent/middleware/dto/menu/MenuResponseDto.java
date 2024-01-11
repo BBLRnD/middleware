@@ -1,7 +1,6 @@
 package com.agent.middleware.dto.menu;
 
 
-import com.agent.middleware.entity.Menu;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,5 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MenuResponseDto {
 
-   private List<Menu> menus;
+    private List<MenuDto> layerZero;
+    private List<MenuDto> layerOne;
+    private List<MenuDto> layerTwo;
 }

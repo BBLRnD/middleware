@@ -3,10 +3,11 @@ package com.agent.middleware.service;
 import com.agent.middleware.dto.UserRegisterDto;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
-import com.agent.middleware.enums.UserType;
 import com.agent.middleware.repository.RoleRepository;
 import com.agent.middleware.repository.UserRepository;
 import com.agent.middleware.repository.UserRoleRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(UserRegisterDto userRequest) {
+    public void register(UserRegisterDto userRequest) throws JsonProcessingException {
         if (userRequest.getUsername() == null) {
             throw new RuntimeException("Parameter username is not found in request..!!");
         } else if (userRequest.getPassword() == null) {
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
         userInfo.setFullName(userRequest.getFullName());
         userInfo.setUsername(userRequest.getUsername());
         userInfo.setPassword(encodedPassword);
-        userInfo.setUserType(UserType.valueOf(userRequest.getUserType()).name());
+        userInfo.setModules(new ObjectMapper().writeValueAsString(userRequest.getModules()));
         userRepository.save(userInfo);
     }
 
@@ -51,20 +52,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserInfo getByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Username Not Found"));
+    }
+
+    @Override
     public UserInfo loadUserByUsername(String username) throws UsernameNotFoundException {
         UserInfo userInfo = userRepository.findByUsername(username).orElseThrow(() -> new SecurityException("User or password not matched"));
         return new CustomUserDetails(userInfo, userRoleRepository, roleRepository, userInfo.getId());
     }
-
-//    private Set<SimpleGrantedAuthority> getAuthority(UserInfo userInfo) {
-//        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-//        List<UserRole> userRoleList = userRoleRepository.findAllByUserId(userInfo.getId()).orElse(new ArrayList<>());
-//        if (userRoleList.size() > 0) {
-//            userRoleList.forEach(u -> {
-//                Role role = roleRepository.findById(u.getId()).orElseThrow(() -> new RuntimeException("Role missing"));
-//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-//            });
-//        }
-//        return authorities;
-//    }
 }

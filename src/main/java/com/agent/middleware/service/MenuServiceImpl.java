@@ -2,8 +2,7 @@ package com.agent.middleware.service;
 
 import com.agent.middleware.dto.menu.MenuDto;
 import com.agent.middleware.entity.Menu;
-import com.agent.middleware.enums.MenuType;
-import com.agent.middleware.enums.UserType;
+import com.agent.middleware.enums.Module;
 import com.agent.middleware.repository.MenuRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,8 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuDto> getAllByUserType(UserType userType) {
-        List<Menu> menus = menuRepository.findAllByUserType(userType);
+    public List<MenuDto> getAllByUserTypeAndLayer(Module module, Integer layer) {
+        List<Menu> menus = menuRepository.findAllByModuleAndLayer(module, layer);
         List<MenuDto> dtos = menus
                 .stream()
                 .map(menu -> modelMapper.map(menu, MenuDto.class))

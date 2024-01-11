@@ -2,7 +2,7 @@ package com.agent.middleware.entity;
 
 
 import com.agent.middleware.enums.MenuType;
-import com.agent.middleware.enums.UserType;
+import com.agent.middleware.enums.Module;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +14,12 @@ import lombok.NoArgsConstructor;
 public class Menu {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
     private String title;
     @Enumerated(EnumType.STRING)
-    private UserType userType;
-
+    private Module module;
     @Enumerated(EnumType.STRING)
-    private MenuType menuType;
+    private MenuType type;
     private String icon;
     private String component;
     private String role;
