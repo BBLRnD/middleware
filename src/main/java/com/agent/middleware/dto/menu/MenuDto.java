@@ -14,7 +14,7 @@ public class MenuDto {
     private String id;
     private String title;
     @Enumerated(EnumType.STRING)
-    private Module userType;
+    private Module module;
     @Enumerated(EnumType.STRING)
     private MenuType type;
     private String icon;

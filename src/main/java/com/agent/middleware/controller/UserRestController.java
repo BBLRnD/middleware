@@ -74,6 +74,7 @@ public class UserRestController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/refresh-token")
+    @SneakyThrows
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
         RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
         refreshTokenService.verifyExpiration(refreshToken);
@@ -84,6 +85,8 @@ public class UserRestController {
         jwtResponseDto.setRefreshToken(refreshToken.getToken());
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
         jwtResponseDto.setFullName(userInfo.getFullName());
+        jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {
+        }));
         return jwtResponseDto;
     }
 
