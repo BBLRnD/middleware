@@ -5,6 +5,8 @@ import com.agent.middleware.entity.Role;
 import com.agent.middleware.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RoleServiceImpl implements RoleService{
 
@@ -23,5 +25,10 @@ public class RoleServiceImpl implements RoleService{
         role.setDescription(roleDto.getDescription());
         role.setName(roleDto.getName());
         roleRepository.save(role);
+    }
+
+    @Override
+    public void saveAll(List<Role> roleList) {
+    roleRepository.saveAll(roleList);
     }
 }

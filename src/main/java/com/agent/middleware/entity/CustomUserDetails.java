@@ -31,7 +31,7 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
         List<UserRole> userRoleList = this.userRoleRepository.findAllByUserId(userId).orElse(new ArrayList<>());
         if (userRoleList.size() > 0) {
             userRoleList.forEach(u -> {
-                Role role = this.roleRepository.findById(u.getId()).orElseThrow(() -> new RuntimeException("Role missing"));
+                Role role = this.roleRepository.findById(u.getRoleId()).orElseThrow(() -> new RuntimeException("Role missing"));
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
             });
         }
