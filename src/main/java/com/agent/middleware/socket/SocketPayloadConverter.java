@@ -2,7 +2,12 @@ package com.agent.middleware.socket;
 
 import com.agent.middleware.socket.payloads.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 
 public class SocketPayloadConverter {
 
@@ -151,8 +156,25 @@ public class SocketPayloadConverter {
         return exceptionBlock;
     }
 
-    private GenBlock getGenBlock(String genBlockString) {
+    public GenBlock getGenBlock(String genBlockString) {
         GenBlock genBlock = new GenBlock();
+        // genBlockString has the format "genDataBlock=[data1=<>|data2=<>]"
+        if (genBlockString.startsWith("[genDataBlock=[")) {
+            String genDataBlockString = genBlockString.substring("[genDataBlock=[".length(), genBlockString.length() - 2);
+            String[] keyValuePairs = genDataBlockString.split("\\|");
+
+            Map<String, String> genDataMap = new HashMap<>();
+
+            System.out.println(genDataMap);
+            for (String pair : keyValuePairs) {
+                String[] parts = pair.split("=");
+                if (parts.length == 2) {
+                    genDataMap.put(parts[0], parts[1]);
+                }
+            }
+            genBlock.setDataMap(genDataMap);
+        }
+        // Return the GenBlock object
         return genBlock;
     }
 
@@ -290,7 +312,7 @@ public class SocketPayloadConverter {
 
 
     private String getGenBlock(GenBlock genBlock) {
-        return "";
+        return genBlock.genBlockToString();
     }
 
     private String getMrhBlock(MrhBlock mrhBlock) {
