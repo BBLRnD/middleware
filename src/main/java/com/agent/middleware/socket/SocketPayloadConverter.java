@@ -2,11 +2,7 @@ package com.agent.middleware.socket;
 
 import com.agent.middleware.socket.payloads.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 
 public class SocketPayloadConverter {
@@ -21,8 +17,8 @@ public class SocketPayloadConverter {
     //data:: [serviceName=MoveMoneyService|versionInfo=v01|funcCode=L]
     private CallingInfo getCallingInfoObject(String callingInfoString) {
         CallingInfo callingInfo = new CallingInfo();
-        String[] particles = callingInfoString.replaceAll("\\[","")
-                .replaceAll("\\]","")
+        String[] particles = callingInfoString.replaceAll("\\[", "")
+                .replaceAll("\\]", "")
                 .split("\\|");
 
         for (String particle : particles) {
@@ -42,7 +38,6 @@ public class SocketPayloadConverter {
 
             }
         }
-
         return callingInfo;
     }
 
@@ -65,11 +60,9 @@ public class SocketPayloadConverter {
 
                 if ("actionCode".equals(key)) {
                     callingParam.setActionCode(value);
-                }
-                else if ("submitWithExceptionOverride".equals(key)) {
+                } else if ("submitWithExceptionOverride".equals(key)) {
                     callingParam.setSubmitWithExceptionOverride("Y".equalsIgnoreCase(value));
-                }
-                else {
+                } else {
                     paramMap.put(key, value);
                 }
             }
@@ -83,8 +76,8 @@ public class SocketPayloadConverter {
     // data:: [ipAddress= 127.0.0.1|processorId=coreI7|macAddress=secTok|browser=Mozilla]
     private DeviceInfo getDeviceInfoObject(String deviceInfoString) {
         DeviceInfo deviceInfo = new DeviceInfo();
-        String[] particles = deviceInfoString.replaceAll("\\[","")
-                .replaceAll("\\]","")
+        String[] particles = deviceInfoString.replaceAll("\\[", "")
+                .replaceAll("\\]", "")
                 .split("\\|");
 
         for (String particle : particles) {
@@ -109,12 +102,13 @@ public class SocketPayloadConverter {
 
         return deviceInfo;
     }
+
     // data:: [headerInfo=abc|ppp|pppp][numOfRecs=53][messageToDisplay=][[1|6|9]~[2|3|0]pipeSeperatedColumn tilDaSeperatedRow]
     private ExceptionBlock getExceptionBlock(String exceptionBlockString) {
         String[] parts = exceptionBlockString.split("\\[|\\]");
 
         List<String> headerInfo = new ArrayList<>();
-        int numOfRecs = 0;
+        String numOfRecs = "0";
         String messageToDisplay = "";
         List<List<String>> records = new ArrayList<>();
 
@@ -131,7 +125,7 @@ public class SocketPayloadConverter {
                         break;
                     case "numOfRecs":
                         if (!value.isEmpty()) {
-                            numOfRecs = Integer.parseInt(value);
+                            numOfRecs = value;
                         }
                         break;
                     case "messageToDisplay":
@@ -172,7 +166,7 @@ public class SocketPayloadConverter {
                     genDataMap.put(parts[0], parts[1]);
                 }
             }
-            genBlock.setDataMap(genDataMap);
+//            genBlock.setDataMap(genDataMap);
         }
         // Return the GenBlock object
         return genBlock;
@@ -183,15 +177,22 @@ public class SocketPayloadConverter {
         return listBlock;
     }
 
-    private MrhBlock getMrhBlock(String gridMrhBlockString) {
+
+    //[numOfMrh=3]
+    //[mrhBlock1=[headerInfo= name | age | address][numOfRecs=][messageToDisplay=][nafiz | 33 | dhaka ~ polash | 27 | khulna]]
+    //[mrhBlock2=[headerInfo=pipeSeperatedColumnNames][numOfRecs=][messageToDisplay=][pipeSeperatedColumn tilDaSeperatedRow]]
+    //[mrhBlock3=[headerInfo=pipeSeperatedColumnNames][numOfRecs=][messageToDisplay=][pipeSeperatedColumn tilDaSeperatedRow]]
+    //]
+    private MrhBlock getMrhBlockObject(String gridMrhBlockString) {
         MrhBlock mrhBlock = new MrhBlock();
+
         return mrhBlock;
     }
 
     private SecurityInfo getSecurityInfoObject(String securityString) {
         SecurityInfo securityInfo = new SecurityInfo();
 
-        String [] keyValuePairs = securityString.split("\\[|\\||\\]");
+        String[] keyValuePairs = securityString.split("\\[|\\||\\]");
 
         for (String keyValuePair : keyValuePairs) {
             String[] keyValue = keyValuePair.split("=");
@@ -200,8 +201,7 @@ public class SocketPayloadConverter {
                 String key = keyValue[0].trim();
                 String value = keyValue[1].trim();
 
-                switch (key)
-                {
+                switch (key) {
                     case "userId":
                         securityInfo.setUserId(value);
                         break;
@@ -224,7 +224,7 @@ public class SocketPayloadConverter {
     private StatusBlock getStatusBlock(String statusBlockString) {
         StatusBlock statusBlock = new StatusBlock();
 
-        String [] keyValuePairs = statusBlockString.split("\\[|\\||\\]");
+        String[] keyValuePairs = statusBlockString.split("\\[|\\||\\]");
 
 
         for (String keyValuePair : keyValuePairs) {
@@ -234,8 +234,7 @@ public class SocketPayloadConverter {
                 String key = keyValue[0].trim();
                 String value = keyValue[1].trim();
 
-                switch (key)
-                {
+                switch (key) {
                     case "responseCode":
                         statusBlock.setResponseCode(value);
                         break;
@@ -312,6 +311,7 @@ public class SocketPayloadConverter {
 
 
     private String getGenBlock(GenBlock genBlock) {
+
         return genBlock.genBlockToString();
     }
 

@@ -1,4 +1,4 @@
-package com.agent.middleware.socket.payloads;
+package com.agent.middleware.dto.socket;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @ToString
-public class MrhBlock implements BaseSocketObject{
+public class MrhBlock implements BaseSocketObject {
 
     ///currently max 3;
     private Integer numberOfMrh;

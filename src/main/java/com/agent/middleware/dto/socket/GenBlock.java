@@ -1,8 +1,9 @@
-package com.agent.middleware.socket.payloads;
+package com.agent.middleware.dto.socket;
 
 import java.util.Map;
 
-public class GenBlock implements BaseSocketObject{
+
+public class GenBlock implements BaseSocketObject {
 
     public Map<String, String> genDataMap;
 
