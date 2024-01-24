@@ -17,9 +17,9 @@ public class SocketPayloadConverter {
     //data:: [serviceName=MoveMoneyService|versionInfo=v01|funcCode=L]
     private CallingInfo getCallingInfoObject(String callingInfoString) {
         CallingInfo callingInfo = new CallingInfo();
-        String[] particles = callingInfoString.replaceAll("\\[", "")
-                .replaceAll("\\]", "")
-                .split("\\|");
+        String[] particles = callingInfoString
+
+                .split("\\[|\\]|\\|");
 
         for (String particle : particles) {
             String[] keyValue = particle.split("=");
@@ -35,19 +35,18 @@ public class SocketPayloadConverter {
                 } else if ("funcCode".equals(key)) {
                     callingInfo.setFuncCode(value);
                 }
-
             }
         }
+
         return callingInfo;
     }
 
     // data:: [criteria1=criteriaValue1|criteria2=criteriaValue2|actionCode=<Submit,Cancel>|submitWithExceptionOverride=Y]
     private CallingParam getCallingParamObject(String callingParamString) {
         CallingParam callingParam = new CallingParam();
+
         String[] keyValuePairs = callingParamString
-                .replaceAll("\\[", "") // Remove leading '['
-                .replaceAll("\\]", "") // Remove trailing ']'
-                .split("\\|");
+                .split("[\\[\\]|]");
 
         HashMap<String, String> paramMap = new HashMap<>();
 
@@ -60,9 +59,11 @@ public class SocketPayloadConverter {
 
                 if ("actionCode".equals(key)) {
                     callingParam.setActionCode(value);
-                } else if ("submitWithExceptionOverride".equals(key)) {
+                }
+                else if ("submitWithExceptionOverride".equals(key)) {
                     callingParam.setSubmitWithExceptionOverride("Y".equalsIgnoreCase(value));
-                } else {
+                }
+                else {
                     paramMap.put(key, value);
                 }
             }
@@ -76,9 +77,7 @@ public class SocketPayloadConverter {
     // data:: [ipAddress= 127.0.0.1|processorId=coreI7|macAddress=secTok|browser=Mozilla]
     private DeviceInfo getDeviceInfoObject(String deviceInfoString) {
         DeviceInfo deviceInfo = new DeviceInfo();
-        String[] particles = deviceInfoString.replaceAll("\\[", "")
-                .replaceAll("\\]", "")
-                .split("\\|");
+        String[] particles = deviceInfoString.split("\\[|\\]|\\|");
 
         for (String particle : particles) {
             String[] keyValue = particle.split("=");
@@ -102,7 +101,6 @@ public class SocketPayloadConverter {
 
         return deviceInfo;
     }
-
     // data:: [headerInfo=abc|ppp|pppp][numOfRecs=53][messageToDisplay=][[1|6|9]~[2|3|0]pipeSeperatedColumn tilDaSeperatedRow]
     private ExceptionBlock getExceptionBlock(String exceptionBlockString) {
         String[] parts = exceptionBlockString.split("\\[|\\]");
@@ -224,7 +222,7 @@ public class SocketPayloadConverter {
     private StatusBlock getStatusBlock(String statusBlockString) {
         StatusBlock statusBlock = new StatusBlock();
 
-        String[] keyValuePairs = statusBlockString.split("\\[|\\||\\]");
+        String [] keyValuePairs = statusBlockString.split("\\[|\\||\\]");
 
 
         for (String keyValuePair : keyValuePairs) {
@@ -234,7 +232,8 @@ public class SocketPayloadConverter {
                 String key = keyValue[0].trim();
                 String value = keyValue[1].trim();
 
-                switch (key) {
+                switch (key)
+                {
                     case "responseCode":
                         statusBlock.setResponseCode(value);
                         break;
@@ -253,9 +252,9 @@ public class SocketPayloadConverter {
     private String getCallingInfoString(CallingInfo callingInfo) {
         StringBuilder result = new StringBuilder();
 
-        result.append("[serviceName=").append(callingInfo.getServiceName()).append("|");
+        result.append("[").append("callingInfo=").append("[serviceName=").append(callingInfo.getServiceName()).append("|");
         result.append("versionInfo=").append(callingInfo.getVersionInfo()).append("|");
-        result.append("funcCode=").append(callingInfo.getFuncCode()).append("]");
+        result.append("funcCode=").append(callingInfo.getFuncCode()).append("]]");
 
         return result.toString();
     }
@@ -268,10 +267,10 @@ public class SocketPayloadConverter {
     private String getDeviceInfo(DeviceInfo deviceInfo) {
         StringBuilder result = new StringBuilder();
 
-        result.append("[ipAddress=").append(deviceInfo.getIpAddress()).append("|");
+        result.append("[").append("deviceInfo=").append("[ipAddress=").append(deviceInfo.getIpAddress()).append("|");
         result.append("processorId=").append(deviceInfo.getProcessorId()).append("|");
         result.append("macAddress=").append(deviceInfo.getMacAddress()).append("|");
-        result.append("browser=").append(deviceInfo.getBrowser()).append("]");
+        result.append("browser=").append(deviceInfo.getBrowser()).append("]]");
 
         return result.toString();
     }
@@ -282,10 +281,11 @@ public class SocketPayloadConverter {
             return "[]";
         }
 
-        StringBuilder result = new StringBuilder("[ ");
+        StringBuilder result = new StringBuilder("[callingParam=[");
 
         HashMap<String, String> paramMap = callingParam.getHashMap();
         if (paramMap != null && !paramMap.isEmpty()) {
+
             for (Map.Entry<String, String> entry : paramMap.entrySet()) {
                 result.append(entry.getKey())
                         .append("=")
@@ -295,7 +295,7 @@ public class SocketPayloadConverter {
         }
 
         if (callingParam.getActionCode() != null) {
-            result.append("[actionCode=")
+            result.append("actionCode=")
                     .append(callingParam.getActionCode())
                     .append("|");
         }
@@ -303,7 +303,8 @@ public class SocketPayloadConverter {
         if (callingParam.getSubmitWithExceptionOverride() != null) {
             result.append("submitWithExceptionOverride=")
                     .append(callingParam.getSubmitWithExceptionOverride() ? "Y" : "N")
-                    .append("|");
+
+                    .append("]");
         }
         result.append("]");
         return result.toString();
