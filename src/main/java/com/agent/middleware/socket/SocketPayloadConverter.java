@@ -2,7 +2,11 @@ package com.agent.middleware.socket;
 
 import com.agent.middleware.socket.payloads.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SocketPayloadConverter {
+
 
     private RequestSocketStringObject getRequestStringObject(String socketResponse) {
 
@@ -28,14 +32,36 @@ public class SocketPayloadConverter {
         DeviceInfo deviceInfo = new DeviceInfo();
         return deviceInfo;
     }
+
     // data:: [headerInfo=abc][numOfRecs=53][messageToDisplay=][pipeSeperatedColumn tilDaSeperatedRow]
     private ExceptionBlock getExceptionBlock(String exceptionBlockString) {
         ExceptionBlock exceptionBlock = new ExceptionBlock();
         return exceptionBlock;
     }
 
-    private GenBlock getGenBlock(String genBlockString) {
+
+    // [genDataBlock=[data1=<>|data2=<>]]
+    public GenBlock getGenBlock(String genBlockString) {
+
         GenBlock genBlock = new GenBlock();
+
+        // genBlockString has the format "genDataBlock=[data1=<>|data2=<>]"
+        if (genBlockString.startsWith("[genDataBlock=[")) {
+            String genDataBlockString = genBlockString.substring("[genDataBlock=[".length(), genBlockString.length() - 2);
+            String[] keyValuePairs = genDataBlockString.split("\\|");
+
+            Map<String, String> genDataMap = new HashMap<>();
+
+            System.out.println(genDataMap);
+            for (String pair : keyValuePairs) {
+                String[] parts = pair.split("=");
+                if (parts.length == 2) {
+                    genDataMap.put(parts[0], parts[1]);
+                }
+            }
+            genBlock.setDataMap(genDataMap);
+        }
+        // Return the GenBlock object
         return genBlock;
     }
 
@@ -85,7 +111,7 @@ public class SocketPayloadConverter {
 
 
     private String getGenBlock(GenBlock genBlock) {
-        return "";
+        return genBlock.genBlockToString();
     }
 
     private String getMrhBlock(MrhBlock mrhBlock) {
@@ -103,5 +129,6 @@ public class SocketPayloadConverter {
     private String getExceptionBlock(ExceptionBlock exceptionBlock) {
         return "";
     }
+
 
 }
