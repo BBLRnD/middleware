@@ -96,6 +96,33 @@ public class SocketPayloadConverter {
 
     private SecurityInfo getSecurityInfoObject(String securityString) {
         SecurityInfo securityInfo = new SecurityInfo();
+
+        String [] keyValuePairs = securityString.split("\\[|\\||\\]");
+
+        for (String keyValuePair : keyValuePairs) {
+            String[] keyValue = keyValuePair.split("=");
+
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                switch (key)
+                {
+                    case "userId":
+                        securityInfo.setUserId(value);
+                        break;
+                    case "sessionId":
+                        securityInfo.setSessionId(value);
+                        break;
+                    case "securityToken":
+                        securityInfo.setSecurityToken(value);
+                        break;
+                    case "saltValue":
+                        securityInfo.setSaltValue(value);
+                        break;
+                }
+            }
+        }
         return securityInfo;
     }
 
@@ -103,7 +130,18 @@ public class SocketPayloadConverter {
     private StatusBlock getStatusBlock(String statusBlockString) {
         StatusBlock statusBlock = new StatusBlock();
 
-        //todo: segregation logic
+        String[] parts = statusBlockString.split("\\[|\\]");
+        for (String part : parts) {
+            if (part.startsWith("response=<")) {
+                int endIndex = part.indexOf(">");
+                if (endIndex != -1) {
+                    String codePart = part.substring("response=<".length(), endIndex);
+                    statusBlock.setResponseCode(codePart.split(",")[0]);  // Extracting the first part before comma
+                }
+            } else if (part.startsWith("responseMessage=")) {
+                statusBlock.setResponseMessage(part.substring("responseMessage=".length()));
+            }
+        }
         return statusBlock;
     }
 
