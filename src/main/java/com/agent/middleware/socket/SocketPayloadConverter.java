@@ -2,6 +2,10 @@ package com.agent.middleware.socket;
 
 import com.agent.middleware.socket.payloads.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class SocketPayloadConverter {
 
     private RequestSocketStringObject getRequestStringObject(String socketResponse) {
@@ -28,9 +32,50 @@ public class SocketPayloadConverter {
         DeviceInfo deviceInfo = new DeviceInfo();
         return deviceInfo;
     }
-    // data:: [headerInfo=abc][numOfRecs=53][messageToDisplay=][pipeSeperatedColumn tilDaSeperatedRow]
+    // data:: [headerInfo=abc|ppp|pppp][numOfRecs=53][messageToDisplay=][[1|6|9]~[2|3|0]pipeSeperatedColumn tilDaSeperatedRow]
     private ExceptionBlock getExceptionBlock(String exceptionBlockString) {
+        String[] parts = exceptionBlockString.split("\\[|\\]");
+
+        List<String> headerInfo = new ArrayList<>();
+        int numOfRecs = 0;
+        String messageToDisplay = "";
+        List<List<String>> records = new ArrayList<>();
+
+        for (String part : parts) {
+            String[] keyValue = part.split("=");
+
+            if (keyValue.length > 1) {
+                String key = keyValue[0];
+                String value = keyValue[1];
+
+                switch (key) {
+                    case "headerInfo":
+                        headerInfo = Arrays.asList(value.split("\\|"));
+                        break;
+                    case "numOfRecs":
+                        if (!value.isEmpty()) {
+                            numOfRecs = Integer.parseInt(value);
+                        }
+                        break;
+                    case "messageToDisplay":
+                        messageToDisplay = value;
+                        break;
+                    case "records":
+                        String[] recordStrings = value.split("~");
+                        for (String recordString : recordStrings) {
+                            records.add(Arrays.asList(recordString.split("\\|")));
+                        }
+                        break;
+                }
+            }
+        }
+
         ExceptionBlock exceptionBlock = new ExceptionBlock();
+        exceptionBlock.setHeaderInfo(headerInfo);
+        exceptionBlock.setNumOfRecs(numOfRecs);
+        exceptionBlock.setMessageToDisplay(messageToDisplay);
+        exceptionBlock.setRecords(records);
+
         return exceptionBlock;
     }
 
