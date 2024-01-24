@@ -2,9 +2,7 @@ package com.agent.middleware.socket;
 
 import com.agent.middleware.socket.payloads.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class SocketPayloadConverter {
 
@@ -18,18 +16,92 @@ public class SocketPayloadConverter {
     //data:: [serviceName=MoveMoneyService|versionInfo=v01|funcCode=L]
     private CallingInfo getCallingInfoObject(String callingInfoString) {
         CallingInfo callingInfo = new CallingInfo();
+        String[] particles = callingInfoString.replaceAll("\\[","")
+                .replaceAll("\\]","")
+                .split("\\|");
+
+        for (String particle : particles) {
+            String[] keyValue = particle.split("=");
+
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                if ("serviceName".equals(key)) {
+                    callingInfo.setServiceName(value);
+                } else if ("versionInfo".equals(key)) {
+                    callingInfo.setVersionInfo(value);
+                } else if ("funcCode".equals(key)) {
+                    callingInfo.setFuncCode(value);
+                }
+
+            }
+        }
+
         return callingInfo;
     }
 
     // data:: [criteria1=criteriaValue1|criteria2=criteriaValue2|actionCode=<Submit,Cancel>|submitWithExceptionOverride=Y]
     private CallingParam getCallingParamObject(String callingParamString) {
         CallingParam callingParam = new CallingParam();
+        String[] keyValuePairs = callingParamString
+                .replaceAll("\\[", "") // Remove leading '['
+                .replaceAll("\\]", "") // Remove trailing ']'
+                .split("\\|");
+
+        HashMap<String, String> paramMap = new HashMap<>();
+
+        for (String pair : keyValuePairs) {
+            String[] keyValue = pair.split("=");
+
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                if ("actionCode".equals(key)) {
+                    callingParam.setActionCode(value);
+                }
+                else if ("submitWithExceptionOverride".equals(key)) {
+                    callingParam.setSubmitWithExceptionOverride("Y".equalsIgnoreCase(value));
+                }
+                else {
+                    paramMap.put(key, value);
+                }
+            }
+        }
+
+        callingParam.setHashMap(paramMap);
+
         return callingParam;
     }
 
     // data:: [ipAddress= 127.0.0.1|processorId=coreI7|macAddress=secTok|browser=Mozilla]
     private DeviceInfo getDeviceInfoObject(String deviceInfoString) {
         DeviceInfo deviceInfo = new DeviceInfo();
+        String[] particles = deviceInfoString.replaceAll("\\[","")
+                .replaceAll("\\]","")
+                .split("\\|");
+
+        for (String particle : particles) {
+            String[] keyValue = particle.split("=");
+
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                if ("ipAddress".equals(key)) {
+                    deviceInfo.setIpAddress(value);
+                } else if ("processorId".equals(key)) {
+                    deviceInfo.setProcessorId(value);
+                } else if ("macAddress".equals(key)) {
+                    deviceInfo.setMacAddress(value);
+                } else if ("browser".equals(key)) {
+                    deviceInfo.setBrowser(value);
+                }
+
+            }
+        }
+
         return deviceInfo;
     }
     // data:: [headerInfo=abc|ppp|pppp][numOfRecs=53][messageToDisplay=][[1|6|9]~[2|3|0]pipeSeperatedColumn tilDaSeperatedRow]
@@ -158,7 +230,13 @@ public class SocketPayloadConverter {
     /////////////////////////
 
     private String getCallingInfoString(CallingInfo callingInfo) {
-        return "";
+        StringBuilder result = new StringBuilder();
+
+        result.append("[serviceName=").append(callingInfo.getServiceName()).append("|");
+        result.append("versionInfo=").append(callingInfo.getVersionInfo()).append("|");
+        result.append("funcCode=").append(callingInfo.getFuncCode()).append("]");
+
+        return result.toString();
     }
 
     private String getSecurityInfo(SecurityInfo securityInfo) {
@@ -167,12 +245,47 @@ public class SocketPayloadConverter {
 
 
     private String getDeviceInfo(DeviceInfo deviceInfo) {
-        return "";
+        StringBuilder result = new StringBuilder();
+
+        result.append("[ipAddress=").append(deviceInfo.getIpAddress()).append("|");
+        result.append("processorId=").append(deviceInfo.getProcessorId()).append("|");
+        result.append("macAddress=").append(deviceInfo.getMacAddress()).append("|");
+        result.append("browser=").append(deviceInfo.getBrowser()).append("]");
+
+        return result.toString();
     }
 
 
     private String getCallingParam(CallingParam callingParam) {
-        return "";
+        if (callingParam == null) {
+            return "[]";
+        }
+
+        StringBuilder result = new StringBuilder("[ ");
+
+        HashMap<String, String> paramMap = callingParam.getHashMap();
+        if (paramMap != null && !paramMap.isEmpty()) {
+            for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+                result.append(entry.getKey())
+                        .append("=")
+                        .append(entry.getValue())
+                        .append("|");
+            }
+        }
+
+        if (callingParam.getActionCode() != null) {
+            result.append("[actionCode=")
+                    .append(callingParam.getActionCode())
+                    .append("|");
+        }
+
+        if (callingParam.getSubmitWithExceptionOverride() != null) {
+            result.append("submitWithExceptionOverride=")
+                    .append(callingParam.getSubmitWithExceptionOverride() ? "Y" : "N")
+                    .append("|");
+        }
+        result.append("]");
+        return result.toString();
     }
 
 
