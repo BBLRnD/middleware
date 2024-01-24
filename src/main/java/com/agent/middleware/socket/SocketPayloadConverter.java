@@ -130,16 +130,25 @@ public class SocketPayloadConverter {
     private StatusBlock getStatusBlock(String statusBlockString) {
         StatusBlock statusBlock = new StatusBlock();
 
-        String[] parts = statusBlockString.split("\\[|\\]");
-        for (String part : parts) {
-            if (part.startsWith("response=<")) {
-                int endIndex = part.indexOf(">");
-                if (endIndex != -1) {
-                    String codePart = part.substring("response=<".length(), endIndex);
-                    statusBlock.setResponseCode(codePart.split(",")[0]);  // Extracting the first part before comma
+        String [] keyValuePairs = statusBlockString.split("\\[|\\||\\]");
+
+
+        for (String keyValuePair : keyValuePairs) {
+            String[] keyValue = keyValuePair.split("=");
+
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                switch (key)
+                {
+                    case "responseCode":
+                        statusBlock.setResponseCode(value);
+                        break;
+                    case "responseMessage":
+                        statusBlock.setResponseMessage(value);
+                        break;
                 }
-            } else if (part.startsWith("responseMessage=")) {
-                statusBlock.setResponseMessage(part.substring("responseMessage=".length()));
             }
         }
         return statusBlock;
