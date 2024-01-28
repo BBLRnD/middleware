@@ -65,7 +65,7 @@ public class ExceptionBlock{
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("[exceptionBlock=");
-        result.append("[headerInfo=").append(headerInfo != null ? String.join(" | ", headerInfo) : "").append("]");
+        result.append("[headerInfo=").append(headerInfo != null ? String.join("|", headerInfo) : "").append("]");
         result.append("[numOfRecs=").append(numOfRecs).append("]");
         result.append("[messageToDisplay=").append(messageToDisplay != null ? messageToDisplay : "").append("]");
         result.append("[records=");

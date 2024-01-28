@@ -1,11 +1,15 @@
 package com.agent.middleware.util;
 
+import com.agent.middleware.dto.socket.CallingInfo;
+import com.agent.middleware.dto.socket.ExceptionBlock;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class MapperUtil {
@@ -83,4 +87,18 @@ public class MapperUtil {
 //            result = new StringBuilder("");
         }
     }
+
+
+//    Map<String,String> initialSplit(String payloadAsString){
+//        String pattern = ;
+//        Pattern regex = Pattern.compile(pattern);
+//        Matcher matcher = regex.matcher(payloadAsString);
+//        if (matcher.find()) {
+//            String output = matcher.group();
+//            System.out.println(output);
+//            CallingInfo callingInfo1 = new CallingInfo().callingInfo(output);
+//        } else {
+//            System.out.println("No match found.");
+//        }
+//    }
 }

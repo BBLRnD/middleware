@@ -44,6 +44,11 @@ public class SecurityInfo {
 
     @Override
     public String toString() {
-        return "";
+        StringBuilder result = new StringBuilder();
+        result.append("[").append("securityInfo=").append("[userId=").append(userId).append("|");
+        result.append("sessionId=").append(sessionId).append("|");
+        result.append("securityToken=").append(securityToken).append("|");
+        result.append("saltValue=").append(saltValue).append("]]");
+        return result.toString();
     }
 }

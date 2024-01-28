@@ -1,6 +1,7 @@
 package com.agent.middleware.controller;
 
 
+import com.agent.middleware.constants.RegexConstant;
 import com.agent.middleware.dto.socket.CallingInfo;
 import com.agent.middleware.dto.socket.ExceptionBlock;
 import com.agent.middleware.dto.socket.SocketPayload;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -56,9 +59,23 @@ public class TestRestController {
         exceptionBlock.setRecords(values);
         socketRequestPayload.setExceptionBlock(exceptionBlock);
         String payloadAsString = socketRequestPayload.toString();
-        System.out.println(payloadAsString);
-
-
+        System.out.println("REQUEST" + payloadAsString);
+        String[] initialSegments = payloadAsString.split("~~");
+        CallingInfo callingInfo1;
+        ExceptionBlock exceptionBlock1;
+        SocketPayload socketPayloadResponse = new SocketPayload();
+        for(int i=0; i< initialSegments.length; i++){
+            if(initialSegments[i].contains("[callingInfo=")){
+                 callingInfo1 = new CallingInfo().callingInfo(initialSegments[i]);
+                socketPayloadResponse.setCallingInfo(callingInfo1);
+            }else if(initialSegments[i].contains("[exceptionBlock=")){
+                 exceptionBlock1 = new ExceptionBlock().exceptionBlock(initialSegments[i]);
+                 socketPayloadResponse.setExceptionBlock(exceptionBlock1);
+            }else{
+                System.out.println("Segment not found "+ i + " " + initialSegments[i]);
+            }
+        }
+        System.out.println("RESPONSE"+ socketPayloadResponse);
         return HttpStatus.OK;
     }
 }

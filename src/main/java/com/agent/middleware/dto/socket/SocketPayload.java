@@ -20,17 +20,25 @@ public class SocketPayload {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("[");
-        stringBuilder.append(callingInfo.toString())
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append(callingInfo ==null? "": callingInfo.toString())
+                .append(callingInfo ==null? "": "~~")
                 .append(securityInfo == null ? "" : securityInfo.toString())
+                .append(securityInfo == null ? "" : "~~")
                 .append(deviceInfo == null ? "" : deviceInfo.toString())
+                .append(deviceInfo == null ? "" : "~~")
                 .append(callingParam == null ? "" : callingParam.toString())
+                .append(callingParam == null ? "" : "~~")
                 .append(statusBlock == null ? "" : statusBlock.toString())
+                .append(statusBlock == null ? "" : "~~")
                 .append(exceptionBlock == null ? "" : exceptionBlock.toString())
+                .append(exceptionBlock == null ? "" : "~~")
                 .append(listBlock == null ? "" : listBlock.toString())
+                .append(listBlock == null ? "" : "~~")
                 .append(genBlock == null ? "" : genBlock.toString())
-                .append(mrhBlock == null ? "" : mrhBlock.toString())
-                .append("\\]");
+                .append(genBlock == null ? "" : "~~")
+                .append(mrhBlock == null ? "" : mrhBlock.toString());
         return stringBuilder.toString();
     }
 }

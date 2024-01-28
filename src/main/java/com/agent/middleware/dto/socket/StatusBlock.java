@@ -37,6 +37,9 @@ public class StatusBlock {
 
     @Override
     public String toString() {
-        return "";
+        StringBuilder result = new StringBuilder();
+        result.append("[").append("statusBlock=").append("[responseCode=").append(responseCode).append("|");
+        result.append("responseMessage=").append(responseMessage).append("]]");
+        return result.toString();
     }
 }
