@@ -4,6 +4,7 @@ package com.agent.middleware.controller;
 import com.agent.middleware.constants.RegexConstant;
 import com.agent.middleware.dto.socket.CallingInfo;
 import com.agent.middleware.dto.socket.ExceptionBlock;
+import com.agent.middleware.dto.socket.ListBlock;
 import com.agent.middleware.dto.socket.SocketPayload;
 import com.agent.middleware.service.SocketService;
 import com.agent.middleware.util.MapperUtil;
@@ -42,6 +43,7 @@ public class TestRestController {
         callingInfo.setServiceName("menuService");
         socketRequestPayload.setCallingInfo(callingInfo);
 
+        // Exception Block
         ExceptionBlock exceptionBlock = new ExceptionBlock();
         String[] headerInfo = {"ErrorCode", "ErrorMessage", "ErrorType", "Datetime"};
         exceptionBlock.setHeaderInfo(headerInfo);
@@ -58,8 +60,29 @@ public class TestRestController {
         values.add(value3);
         exceptionBlock.setRecords(values);
         socketRequestPayload.setExceptionBlock(exceptionBlock);
+
+
+        // Generate List Block
+        ListBlock listBlock = new ListBlock();
+        String[] listHeaders = {"role", "desc", "group", "delFlg","lchgTime"};
+        listBlock.setNumberOfRecs(3);
+        listBlock.setHeaderInfo(listHeaders);
+        listBlock.setMessage("Total 4 pages of 33 records found. Current page 1");
+        listBlock.setCurPageNum(1);
+        listBlock.setMaxPageNum(4);
+        List<String[]> listDataBlock = new ArrayList<>();
+        String[] dataBlock1 = {"CBS","Core Banking Systems","Y","N","06-01-2024 12:41:20"};
+        String[] dataBlock2 = {"SERDSK","Service Desk","N","N","06-01-2024 12:41:20"};
+        String[] dataBlock3 = {"DCGRP01","Data Center","Y","N","06-01-2024 12:41:20"};
+        listDataBlock.add(dataBlock1);
+        listDataBlock.add(dataBlock2);
+        listDataBlock.add(dataBlock3);
+        listBlock.setDataBlock(listDataBlock);
+        socketRequestPayload.setListBlock(listBlock);
+
         String payloadAsString = socketRequestPayload.toString();
         System.out.println("REQUEST" + payloadAsString);
+
         String[] initialSegments = payloadAsString.split("~~");
         CallingInfo callingInfo1;
         ExceptionBlock exceptionBlock1;
