@@ -1,11 +1,13 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-public class SocketPayload implements BaseSocketObject {
+public class SocketPayload {
     private CallingInfo callingInfo;
     private SecurityInfo securityInfo;
     private DeviceInfo deviceInfo;
@@ -15,4 +17,20 @@ public class SocketPayload implements BaseSocketObject {
     private ListBlock listBlock;
     private GenBlock genBlock;
     private MrhBlock mrhBlock;
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("[");
+        stringBuilder.append(callingInfo.toString())
+                .append(securityInfo == null ? "" : securityInfo.toString())
+                .append(deviceInfo == null ? "" : deviceInfo.toString())
+                .append(callingParam == null ? "" : callingParam.toString())
+                .append(statusBlock == null ? "" : statusBlock.toString())
+                .append(exceptionBlock == null ? "" : exceptionBlock.toString())
+                .append(listBlock == null ? "" : listBlock.toString())
+                .append(genBlock == null ? "" : genBlock.toString())
+                .append(mrhBlock == null ? "" : mrhBlock.toString())
+                .append("\\]");
+        return stringBuilder.toString();
+    }
 }

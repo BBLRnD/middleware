@@ -1,6 +1,5 @@
 package com.agent.middleware.util;
 
-import com.agent.middleware.socket.payloads.BaseSocketObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -18,18 +17,18 @@ public class MapperUtil {
     }
 
 
-    public <O extends BaseSocketObject> String objectToJson(O obj) throws JsonProcessingException {
+    public <O> String objectToJson(O obj) throws JsonProcessingException {
         return objectMapper.writeValueAsString(obj);
     }
 
-    public <T extends BaseSocketObject> T stringToObject(String json, Class<T> valueType) throws JsonProcessingException {
+    public <T> T stringToObject(String json, Class<T> valueType) throws JsonProcessingException {
         return objectMapper.readValue(json, valueType);
     }
 
 
     public Map convertToDotNotation(Object obj) {
         StringBuilder result = new StringBuilder();
-        HashMap<String, String> map =  new HashMap<>();
+        HashMap<String, String> map = new HashMap<>();
         convert(obj, result, map);
         return map;
     }
@@ -62,14 +61,14 @@ public class MapperUtil {
                         List<?> list = Arrays.asList((ArrayList<?>) fieldValue).get(0);
                         for (int i = 0; i < list.size(); i++) {
                             StringBuilder data = new StringBuilder(result);
-                            if(list.get(i) instanceof java.lang.String){
-                                map.put(data.append(field.getName()).append("[").append(i).append("]").toString(), list.get(i)+"");
-                            }else{
+                            if (list.get(i) instanceof java.lang.String) {
+                                map.put(data.append(field.getName()).append("[").append(i).append("]").toString(), list.get(i) + "");
+                            } else {
                                 List<?> list2 = Arrays.asList((ArrayList<?>) fieldValue).get(0);
-                                for(int j =0; j< list2.size(); j++){
+                                for (int j = 0; j < list2.size(); j++) {
                                     StringBuilder data1 = new StringBuilder(result);
-                                    if(list.get(j) instanceof java.lang.String){
-                                        map.put(data1.append(field.getName()).append("[").append(j).append("]").toString(), list.get(j)+"");
+                                    if (list.get(j) instanceof java.lang.String) {
+                                        map.put(data1.append(field.getName()).append("[").append(j).append("]").toString(), list.get(j) + "");
                                     }
                                 }
                             }

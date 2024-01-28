@@ -1,9 +1,9 @@
 package com.agent.middleware.service;
 
-import com.agent.middleware.socket.payloads.SocketPayload;
+import com.agent.middleware.dto.socket.SocketPayload;
 
 public interface SocketService {
 
-   String socketPayloadObject(SocketPayload socketRequestPayload);
+    SocketPayload socketRequest(SocketPayload socketPayload);
 
 }

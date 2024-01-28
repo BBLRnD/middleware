@@ -3,38 +3,69 @@ package com.agent.middleware.dto.socket;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Data
-public class CallingParam implements BaseSocketObject {
-
-    private HashMap<String, String> hashMap;
+public class CallingParam{
+    private HashMap<String, String> reqParam;
     private String actionCode;
-    private Boolean submitWithExceptionOverride; // Y/N
+    private Boolean exceptionOverride; // Y/N
 
-    public HashMap<String, String> getHashMap() {
-        return hashMap;
+    public CallingParam callingParam(String callingParamStr){
+
+        CallingParam callingParam = new CallingParam();
+
+        String[] keyValuePairs = callingParamStr
+                .split("[\\[\\]|]");
+
+        HashMap<String, String> paramMap = new HashMap<>();
+
+        for (String pair : keyValuePairs) {
+            String[] keyValue = pair.split("=");
+
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                if ("actionCode".equals(key)) {
+                    callingParam.setActionCode(value);
+                } else if ("submitWithExceptionOverride".equals(key)) {
+                    callingParam.setExceptionOverride("Y".equalsIgnoreCase(value));
+                } else {
+                    paramMap.put(key, value);
+                }
+            }
+        }
+        callingParam.setReqParam(paramMap);
+        return callingParam;
     }
 
-    public void setHashMap(HashMap<String, String> hashMap) {
-        this.hashMap = hashMap;
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("[callingParam=[");
+        HashMap<String, String> paramMap = reqParam;
+        if (paramMap != null && !paramMap.isEmpty()) {
+            for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+                result.append(entry.getKey())
+                        .append("=")
+                        .append(entry.getValue())
+                        .append("|");
+            }
+        }
+
+        if (actionCode != null) {
+            result.append("actionCode=")
+                    .append(actionCode)
+                    .append("|");
+        }
+
+        if (exceptionOverride != null) {
+            result.append("exceptionOverride=")
+                    .append(exceptionOverride ? "Y" : "N")
+                    .append("]");
+        }
+        result.append("]");
+        return result.toString();
     }
-
-
-    public String getActionCode() {
-        return actionCode;
-    }
-
-    public void setActionCode(String actionCode) {
-        this.actionCode = actionCode;
-    }
-
-    public Boolean getSubmitWithExceptionOverride() {
-        return submitWithExceptionOverride;
-    }
-
-    public void setSubmitWithExceptionOverride(Boolean submitWithExceptionOverride) {
-        this.submitWithExceptionOverride = submitWithExceptionOverride;
-    }
-
-
 }

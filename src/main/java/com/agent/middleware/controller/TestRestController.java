@@ -1,10 +1,10 @@
 package com.agent.middleware.controller;
 
 
+import com.agent.middleware.dto.socket.CallingInfo;
+import com.agent.middleware.dto.socket.ExceptionBlock;
+import com.agent.middleware.dto.socket.SocketPayload;
 import com.agent.middleware.service.SocketService;
-import com.agent.middleware.socket.payloads.CallingInfo;
-import com.agent.middleware.socket.payloads.ExceptionBlock;
-import com.agent.middleware.socket.payloads.SocketPayload;
 import com.agent.middleware.util.MapperUtil;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -39,32 +40,25 @@ public class TestRestController {
         socketRequestPayload.setCallingInfo(callingInfo);
 
         ExceptionBlock exceptionBlock = new ExceptionBlock();
-        exceptionBlock.setHeaderInfo(Arrays.asList("ErrorCode", "ErrorMessage", "ErrorType", "Datetime"));
+        String[] headerInfo = {"ErrorCode", "ErrorMessage", "ErrorType", "Datetime"};
+        exceptionBlock.setHeaderInfo(headerInfo);
         exceptionBlock.setMessageToDisplay("Whatever message you want");
         exceptionBlock.setNumOfRecs("23");
 
-        List<List<String>> values = new ArrayList<>();
+        List<String[]> values = new ArrayList<>();
 
-        List<String> value1 = Arrays.asList("000", "SUCCESS", "COMPLETE", "01-01-2023");
-        List<String> value2 = Arrays.asList("001", "IN_PROGRESS","WARNING", "25-01-2023");
-        List<String> value3 = Arrays.asList("001", "IN_PROGRESS","WARNING", "26-01-2023");
+        String[] value1 = {"000", "SUCCESS", "COMPLETE", "01-01-2023"};
+        String[] value2 = {"001", "IN_PROGRESS", "WARNING", "25-01-2023"};
+        String[] value3 = {"001", "IN_PROGRESS", "WARNING", "26-01-2023"};
         values.add(value1);
         values.add(value2);
         values.add(value3);
         exceptionBlock.setRecords(values);
         socketRequestPayload.setExceptionBlock(exceptionBlock);
-        String jsonString = socketService.socketPayloadObject(socketRequestPayload);
-        System.out.println(jsonString);
-        SocketPayload socketPayload = mapperUtil.stringToObject(jsonString, SocketPayload.class);
-//        Map<String,String> dotValues = mapperUtil.convertToDotNotation(socketPayload);
-        HashMap<String, Integer> headerInfo = socketPayload.getExceptionBlock().getHeaderInfo()
-                .stream()
-                .collect(HashMap<String, Integer>::new,
-                        (map, streamValue) -> map.put(streamValue, map.size()),
-                        (map, map2) -> {
-                        });
-        System.out.println(socketPayload.getExceptionBlock().getRecords().get(2).get(headerInfo.get("Datetime")));
-//        SocketRequestPayload socketRequestPayload1 = socketService.socketRequestObject()
+        String payloadAsString = socketRequestPayload.toString();
+        System.out.println(payloadAsString);
+
+
         return HttpStatus.OK;
     }
 }

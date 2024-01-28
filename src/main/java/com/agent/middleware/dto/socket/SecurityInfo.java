@@ -1,43 +1,49 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class SecurityInfo {
     private String userId;
     private String sessionId;
     private String securityToken;
     private String saltValue;
 
-    public String getUserId() {
-        return userId;
+    public SecurityInfo securityInfo(String securityStr) {
+        SecurityInfo securityInfo = new SecurityInfo();
+        String[] keyValuePairs = securityStr.split("\\[|\\||\\]");
+        for (String keyValuePair : keyValuePairs) {
+            String[] keyValue = keyValuePair.split("=");
+
+            if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                switch (key) {
+                    case "userId":
+                        securityInfo.setUserId(value);
+                        break;
+                    case "sessionId":
+                        securityInfo.setSessionId(value);
+                        break;
+                    case "securityToken":
+                        securityInfo.setSecurityToken(value);
+                        break;
+                    case "saltValue":
+                        securityInfo.setSaltValue(value);
+                        break;
+                }
+            }
+        }
+        return securityInfo;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public String getSecurityToken() {
-        return securityToken;
-    }
-
-    public void setSecurityToken(String securityToken) {
-        this.securityToken = securityToken;
-    }
-
-    public String getSaltValue() {
-        return saltValue;
-    }
-
-    public void setSaltValue(String saltValue) {
-        this.saltValue = saltValue;
+    @Override
+    public String toString() {
+        return "";
     }
 }

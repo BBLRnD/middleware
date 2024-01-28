@@ -1,27 +1,46 @@
 package com.agent.middleware.dto.socket;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.HashMap;
 import java.util.Map;
 
 
-public class GenBlock implements BaseSocketObject {
+@Getter
+@Setter
+public class GenBlock {
+    public Map<String, String> formData;
 
-    public Map<String, String> genDataMap;
+    public GenBlock genBlock(String genBlockString) {
+        GenBlock genBlock = new GenBlock();
+        // genBlockString has the format "genDataBlock=[data1=<>|data2=<>]"
+        if (genBlockString.startsWith("[genDataBlock=[")) {
+            String genDataBlockString = genBlockString.substring("[genDataBlock=[".length(), genBlockString.length() - 2);
+            String[] keyValuePairs = genDataBlockString.split("\\|");
 
-    public void setDataMap(Map<String, String> genDataMap) {
-        this.genDataMap = genDataMap;
+            Map<String, String> genDataMap = new HashMap<>();
+
+            System.out.println(genDataMap);
+            for (String pair : keyValuePairs) {
+                String[] parts = pair.split("=");
+                if (parts.length == 2) {
+                    genDataMap.put(parts[0], parts[1]);
+                }
+            }
+//            genBlock.setDataMap(genDataMap);
+        }
+        // Return the GenBlock object
+        return genBlock;
     }
 
-    public Map<String, String> getDataMap() {
-        return genDataMap;
-    }
-
-    public String genBlockToString() {
+    @Override
+    public String toString() {
         StringBuilder result = new StringBuilder("[genDataBlock=[");
-        Map<String, String> genDataMap = getDataMap();
-        for (Map.Entry<String, String> entry : genDataMap.entrySet()) {
+        for (Map.Entry<String, String> entry : formData.entrySet()) {
             result.append(entry.getKey()).append("=").append(entry.getValue()).append("|");
         }
-        if (!genDataMap.isEmpty()) {
+        if (!formData.isEmpty()) {
             result.deleteCharAt(result.length() - 1);
         }
         result.append("]]");
