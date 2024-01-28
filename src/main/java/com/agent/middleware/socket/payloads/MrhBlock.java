@@ -13,8 +13,6 @@ public class MrhBlock implements BaseSocketObject{
 
     ///currently max 3;
     private Integer numberOfMrh;
-    private List<MrhBlockDetails> mrhBlock1;
-    private List<MrhBlockDetails> mrhBlock2;
-    private List<MrhBlockDetails> mrhBlock3;
+    private List<MrhBlockDetails> mrhBlocks;
 
 }

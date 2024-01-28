@@ -3,6 +3,8 @@ package com.agent.middleware.socket;
 import com.agent.middleware.socket.payloads.*;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class SocketPayloadConverter {
@@ -181,9 +183,54 @@ public class SocketPayloadConverter {
     //[mrhBlock2=[headerInfo=pipeSeperatedColumnNames][numOfRecs=][messageToDisplay=][pipeSeperatedColumn tilDaSeperatedRow]]
     //[mrhBlock3=[headerInfo=pipeSeperatedColumnNames][numOfRecs=][messageToDisplay=][pipeSeperatedColumn tilDaSeperatedRow]]
     //]
-    private MrhBlock getMrhBlockObject(String gridMrhBlockString) {
-        MrhBlock mrhBlock = new MrhBlock();
 
+    private String extractValue(String input, String key) {
+        String patternString = "\\[" + key + "=(.*?)\\]";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return null; // Handle the case where the key is not found
+        }
+    }
+
+    private MrhBlock getMrhBlockObject(String gridMrhBlockString) {
+        Long timestamp = new Date().getTime();
+        String mrhDetails = gridMrhBlockString.split("mrhDetails=",2)[1].trim();
+        String[] mrhDetailList = mrhDetails.trim().split("(?=~\\[)");
+        List<MrhBlockDetails> mrhBlockDetailList = new ArrayList<>();
+        for(String mrhDetail: mrhDetailList){
+            MrhBlockDetails mrhBlockDetails = new MrhBlockDetails();
+            mrhBlockDetails.setListName(Objects.requireNonNull(extractValue(mrhDetail, "listName")).replaceAll("\\]\\[\\~",""));
+            mrhBlockDetails.setNumberOfRecs(Integer.parseInt(Objects.requireNonNull(extractValue(mrhDetail, "numberOfRecs")).replaceAll("]\\[","")));
+            mrhBlockDetails.setMessage(Objects.requireNonNull(extractValue(gridMrhBlockString, "message")).replaceAll("\\]\\[",""));
+            mrhBlockDetails.setCurPageNum(Integer.parseInt(Objects.requireNonNull(extractValue(mrhDetail, "curPageNum")).replaceAll("\\]\\[","")));
+            mrhBlockDetails.setMaxPageNum(Integer.parseInt(Objects.requireNonNull(extractValue(mrhDetail, "maxPageNum")).replaceAll("\\]\\[","")));
+
+            String headerInfos = Objects.requireNonNull(extractValue(mrhDetail, "headerInfo")).replace("\\]\\[","");
+            mrhBlockDetails.setHeaderInfo(headerInfos.split("\\|"));
+
+            String dataBlocks = Objects.requireNonNull(extractValue(mrhDetail, "dataBlocks")).replace("\\]\\[","");
+            String[] dataBlockList = dataBlocks.split("\\~");
+            List<String[]> finalBocks = new ArrayList<>();
+            for(int i=0; i< dataBlockList.length; i++){
+                String[] dataBlockData = dataBlockList[i].split("\\|");
+                finalBocks.add(dataBlockData);
+            }
+            mrhBlockDetails.setDataBlock(finalBocks);
+            mrhBlockDetailList.add(mrhBlockDetails);
+        }
+
+        int numberOfMrh = Integer.parseInt(extractValue(gridMrhBlockString,"numOfMrh"));
+
+        MrhBlock mrhBlock = new MrhBlock();
+        mrhBlock.setNumberOfMrh(numberOfMrh);
+        mrhBlock.setMrhBlocks(mrhBlockDetailList);
+        Long timestamp1 = new Date().getTime();
+        System.out.println("first time" + timestamp + " Last Time :"+timestamp1);
+        System.out.println("Difference : " + (timestamp1-timestamp));
         return mrhBlock;
     }
 
@@ -222,7 +269,7 @@ public class SocketPayloadConverter {
     private StatusBlock getStatusBlock(String statusBlockString) {
         StatusBlock statusBlock = new StatusBlock();
 
-        String [] keyValuePairs = statusBlockString.split("\\[|\\||\\]");
+        String[] keyValuePairs = statusBlockString.split("\\[|\\||\\]");
 
 
         for (String keyValuePair : keyValuePairs) {
@@ -268,6 +315,7 @@ public class SocketPayloadConverter {
         StringBuilder result = new StringBuilder();
 
         result.append("[").append("deviceInfo=").append("[ipAddress=").append(deviceInfo.getIpAddress()).append("|");
+        result.append("[ipAddress=").append(deviceInfo.getIpAddress()).append("|");
         result.append("processorId=").append(deviceInfo.getProcessorId()).append("|");
         result.append("macAddress=").append(deviceInfo.getMacAddress()).append("|");
         result.append("browser=").append(deviceInfo.getBrowser()).append("]]");
