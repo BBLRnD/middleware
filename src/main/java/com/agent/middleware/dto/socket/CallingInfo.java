@@ -1,6 +1,5 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,7 @@ public class CallingInfo {
     private String versionInfo;
     private String funcCode;
 
-    public CallingInfo callingInfo(String callingInfoStr){
+    public CallingInfo callingInfo(String callingInfoStr) {
         CallingInfo callingInfo = new CallingInfo();
         String[] particles = callingInfoStr
                 .split("\\[|\\]|\\|");

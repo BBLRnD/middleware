@@ -54,8 +54,9 @@ public class ListBlock{
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append("listBlock = [numberOfRecs=" +numberOfRecs+"]");
-        s.append("[headerInfo=" + StringUtils.join(List.of(headerInfo), '|') +"]");
+        s.append("[listBlock=[numberOfRecs=");
+        s.append(numberOfRecs).append("]");
+        s.append("[headerInfo=").append(StringUtils.join(List.of(headerInfo), '|')).append("]");
         s.append("[message=" + message+"]");
         s.append("[curPageNum="+curPageNum+"]");
         s.append("[maxPageNum="+maxPageNum+"]");
@@ -65,7 +66,7 @@ public class ListBlock{
             if(i < numberOfRecs-1)
                 s.append("~");
         }
-        s.append("]");
+        s.append("]]");
         return s.toString();
     }
 }

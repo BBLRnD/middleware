@@ -86,6 +86,7 @@ public class TestRestController {
         String[] initialSegments = payloadAsString.split("~~");
         CallingInfo callingInfo1;
         ExceptionBlock exceptionBlock1;
+
         SocketPayload socketPayloadResponse = new SocketPayload();
         for(int i=0; i< initialSegments.length; i++){
             if(initialSegments[i].contains("[callingInfo=")){
@@ -94,6 +95,9 @@ public class TestRestController {
             }else if(initialSegments[i].contains("[exceptionBlock=")){
                  exceptionBlock1 = new ExceptionBlock().exceptionBlock(initialSegments[i]);
                  socketPayloadResponse.setExceptionBlock(exceptionBlock1);
+            }else if(initialSegments[i].contains("[listBlock=")){
+                ListBlock listBlock1 = new ListBlock().listBlock(initialSegments[i]);
+                socketPayloadResponse.setListBlock(listBlock1);
             }else{
                 System.out.println("Segment not found "+ i + " " + initialSegments[i]);
             }
