@@ -8,14 +8,14 @@ import lombok.Setter;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
-@Setter
-@NoArgsConstructor
+
 public class CallingParam{
     private HashMap<String, String> reqParam;
     private String actionCode;
     private Boolean exceptionOverride; // Y/N
 
+    public CallingParam(){
+    }
 
     public CallingParam(String callingParamStr, SocketPayload socketPayload){
         socketPayload.setCallingParam(callingParam(callingParamStr));
@@ -77,5 +77,29 @@ public class CallingParam{
         }
         result.append("]");
         return result.toString();
+    }
+
+    public HashMap<String, String> getReqParam() {
+        return reqParam;
+    }
+
+    public void setReqParam(HashMap<String, String> reqParam) {
+        this.reqParam = reqParam;
+    }
+
+    public String getActionCode() {
+        return actionCode;
+    }
+
+    public void setActionCode(String actionCode) {
+        this.actionCode = actionCode;
+    }
+
+    public Boolean getExceptionOverride() {
+        return exceptionOverride;
+    }
+
+    public void setExceptionOverride(Boolean exceptionOverride) {
+        this.exceptionOverride = exceptionOverride;
     }
 }
