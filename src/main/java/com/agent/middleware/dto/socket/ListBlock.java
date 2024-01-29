@@ -1,9 +1,5 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.apache.tomcat.util.buf.StringUtils;
 
 import java.util.ArrayList;
@@ -11,10 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class ListBlock{
     private Integer numberOfRecs;
     private String[] headerInfo;
@@ -25,6 +17,9 @@ public class ListBlock{
 
     public ListBlock(String listBlockStr, SocketPayload socketPayload){
         socketPayload.setListBlock(listBlock(listBlockStr));
+    }
+
+    public ListBlock() {
     }
 
     private String extractValue(String input, String key) {
@@ -72,5 +67,53 @@ public class ListBlock{
         }
         s.append("]]");
         return s.toString();
+    }
+
+    public Integer getNumberOfRecs() {
+        return numberOfRecs;
+    }
+
+    public void setNumberOfRecs(Integer numberOfRecs) {
+        this.numberOfRecs = numberOfRecs;
+    }
+
+    public String[] getHeaderInfo() {
+        return headerInfo;
+    }
+
+    public void setHeaderInfo(String[] headerInfo) {
+        this.headerInfo = headerInfo;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Integer getCurPageNum() {
+        return curPageNum;
+    }
+
+    public void setCurPageNum(Integer curPageNum) {
+        this.curPageNum = curPageNum;
+    }
+
+    public Integer getMaxPageNum() {
+        return maxPageNum;
+    }
+
+    public void setMaxPageNum(Integer maxPageNum) {
+        this.maxPageNum = maxPageNum;
+    }
+
+    public List<String[]> getDataBlock() {
+        return dataBlock;
+    }
+
+    public void setDataBlock(List<String[]> dataBlock) {
+        this.dataBlock = dataBlock;
     }
 }

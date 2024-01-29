@@ -1,9 +1,5 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,9 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-@Getter
-@Setter
-@NoArgsConstructor
+
 public class MrhBlock {
     private Integer numberOfMrh;
     private List<MrhBlockDetails> mrhBlocks;
@@ -22,6 +16,8 @@ public class MrhBlock {
         socketPayload.setMrhBlock(mrhBlock(mrhBlockStr));
     }
 
+    public MrhBlock() {
+    }
 
     private String extractValue(String input, String key) {
         String patternString = "\\[" + key + "=(.*?)\\]";
@@ -79,5 +75,21 @@ public class MrhBlock {
         }
         return s.toString();
 
+    }
+
+    public Integer getNumberOfMrh() {
+        return numberOfMrh;
+    }
+
+    public void setNumberOfMrh(Integer numberOfMrh) {
+        this.numberOfMrh = numberOfMrh;
+    }
+
+    public List<MrhBlockDetails> getMrhBlocks() {
+        return mrhBlocks;
+    }
+
+    public void setMrhBlocks(List<MrhBlockDetails> mrhBlocks) {
+        this.mrhBlocks = mrhBlocks;
     }
 }

@@ -1,22 +1,18 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class GenBlock {
     public Map<String, String> formData;
 
 
     public GenBlock(String genBlockStr, SocketPayload socketPayload){
         socketPayload.setGenBlock(genBlock(genBlockStr));
+    }
+
+    public GenBlock() {
     }
 
     private GenBlock genBlock(String genBlockString) {
@@ -49,5 +45,13 @@ public class GenBlock {
         }
         result.append("]]");
         return result.toString();
+    }
+
+    public Map<String, String> getFormData() {
+        return formData;
+    }
+
+    public void setFormData(Map<String, String> formData) {
+        this.formData = formData;
     }
 }
