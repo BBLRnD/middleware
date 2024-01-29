@@ -1,13 +1,5 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class StatusBlock {
     private String responseCode;
     private String responseMessage;
@@ -15,6 +7,9 @@ public class StatusBlock {
 
     public StatusBlock(String statusStr, SocketPayload socketPayload){
         socketPayload.setStatusBlock(statusBlock(statusStr));
+    }
+
+    public StatusBlock() {
     }
 
     private StatusBlock statusBlock(String statusStr){
@@ -48,5 +43,21 @@ public class StatusBlock {
         result.append("[").append("statusBlock=").append("[responseCode=").append(responseCode).append("|");
         result.append("responseMessage=").append(responseMessage).append("]]");
         return result.toString();
+    }
+
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
     }
 }

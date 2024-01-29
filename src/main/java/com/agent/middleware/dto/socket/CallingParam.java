@@ -1,10 +1,5 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +9,13 @@ public class CallingParam{
     private String actionCode;
     private Boolean exceptionOverride; // Y/N
 
-    public CallingParam(){
-    }
+
 
     public CallingParam(String callingParamStr, SocketPayload socketPayload){
         socketPayload.setCallingParam(callingParam(callingParamStr));
+    }
+
+    public CallingParam(){
     }
 
     private CallingParam callingParam(String callingParamStr){

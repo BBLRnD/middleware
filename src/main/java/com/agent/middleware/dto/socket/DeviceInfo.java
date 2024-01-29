@@ -1,12 +1,6 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
 public class DeviceInfo {
     private String ipAddress;
     private String processorId;
@@ -15,6 +9,9 @@ public class DeviceInfo {
 
     public DeviceInfo(String deviceStr, SocketPayload socketPayload){
         socketPayload.setDeviceInfo(deviceInfo(deviceStr));
+    }
+
+    public DeviceInfo() {
     }
 
     private DeviceInfo deviceInfo(String deviceStr) {
@@ -53,5 +50,37 @@ public class DeviceInfo {
                 .append("macAddress=").append(macAddress).append("|")
                 .append("browser=").append(browser).append("]]");
         return result.toString();
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getProcessorId() {
+        return processorId;
+    }
+
+    public void setProcessorId(String processorId) {
+        this.processorId = processorId;
+    }
+
+    public String getMacAddress() {
+        return macAddress;
+    }
+
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+    }
+
+    public String getBrowser() {
+        return browser;
+    }
+
+    public void setBrowser(String browser) {
+        this.browser = browser;
     }
 }

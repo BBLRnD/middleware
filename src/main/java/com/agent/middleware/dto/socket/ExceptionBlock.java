@@ -1,15 +1,9 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
 public class ExceptionBlock {
     private String[] headerInfo;
     private String numOfRecs;
@@ -21,6 +15,8 @@ public class ExceptionBlock {
         socketPayload.setExceptionBlock(exceptionBlock(exceptionBlockStr));
     }
 
+    public ExceptionBlock() {
+    }
 
     private ExceptionBlock exceptionBlock(String exceptionBlockStr) {
         String[] parts = exceptionBlockStr.split("\\[|\\]");
@@ -83,5 +79,37 @@ public class ExceptionBlock {
         result.append("]]");
 
         return result.toString();
+    }
+
+    public String[] getHeaderInfo() {
+        return headerInfo;
+    }
+
+    public void setHeaderInfo(String[] headerInfo) {
+        this.headerInfo = headerInfo;
+    }
+
+    public String getNumOfRecs() {
+        return numOfRecs;
+    }
+
+    public void setNumOfRecs(String numOfRecs) {
+        this.numOfRecs = numOfRecs;
+    }
+
+    public String getMessageToDisplay() {
+        return messageToDisplay;
+    }
+
+    public void setMessageToDisplay(String messageToDisplay) {
+        this.messageToDisplay = messageToDisplay;
+    }
+
+    public List<String[]> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<String[]> records) {
+        this.records = records;
     }
 }

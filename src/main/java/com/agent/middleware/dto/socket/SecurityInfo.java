@@ -1,12 +1,5 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class SecurityInfo {
     private String userId;
     private String sessionId;
@@ -15,6 +8,9 @@ public class SecurityInfo {
 
     public SecurityInfo(String securityInfoStr, SocketPayload socketPayload){
         socketPayload.setSecurityInfo(securityInfo(securityInfoStr));
+    }
+
+    public SecurityInfo() {
     }
 
     private SecurityInfo securityInfo(String securityStr) {
@@ -54,5 +50,37 @@ public class SecurityInfo {
         result.append("securityToken=").append(securityToken).append("|");
         result.append("saltValue=").append(saltValue).append("]]");
         return result.toString();
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getSecurityToken() {
+        return securityToken;
+    }
+
+    public void setSecurityToken(String securityToken) {
+        this.securityToken = securityToken;
+    }
+
+    public String getSaltValue() {
+        return saltValue;
+    }
+
+    public void setSaltValue(String saltValue) {
+        this.saltValue = saltValue;
     }
 }
