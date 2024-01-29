@@ -1,17 +1,27 @@
 package com.agent.middleware.dto.socket;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class CallingParam{
     private HashMap<String, String> reqParam;
     private String actionCode;
     private Boolean exceptionOverride; // Y/N
 
-    public CallingParam callingParam(String callingParamStr){
+
+    public CallingParam(String callingParamStr, SocketPayload socketPayload){
+        socketPayload.setCallingParam(callingParam(callingParamStr));
+    }
+
+    private CallingParam callingParam(String callingParamStr){
 
         CallingParam callingParam = new CallingParam();
 

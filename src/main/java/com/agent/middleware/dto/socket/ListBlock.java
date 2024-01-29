@@ -1,7 +1,9 @@
 package com.agent.middleware.dto.socket;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.tomcat.util.buf.StringUtils;
 
 import java.util.ArrayList;
@@ -10,7 +12,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class ListBlock{
     private Integer numberOfRecs;
@@ -19,6 +22,10 @@ public class ListBlock{
     private Integer curPageNum;
     private Integer maxPageNum;
     private List<String[]> dataBlock;
+
+    public ListBlock(String listBlockStr, SocketPayload socketPayload){
+        socketPayload.setListBlock(listBlock(listBlockStr));
+    }
 
     private String extractValue(String input, String key) {
         String patternString = "\\[" + key + "=(.*?)\\]";
@@ -31,7 +38,7 @@ public class ListBlock{
             return null; // Handle the case where the key is not found
         }
     }
-    public ListBlock listBlock(String listBlockString){
+    private ListBlock listBlock(String listBlockString){
         ListBlock listBlock = new ListBlock();
         listBlock.setNumberOfRecs(Integer.parseInt(Objects.requireNonNull(extractValue(listBlockString, "numberOfRecs")).replaceAll("]\\[","")));
         String headerInfos = Objects.requireNonNull(extractValue(listBlockString, "headerInfo")).replace("\\]\\[","");

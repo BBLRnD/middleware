@@ -22,8 +22,8 @@ public class SocketPayload {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
-                .append(callingInfo ==null? "": callingInfo.toString())
-                .append(callingInfo ==null? "": "~~")
+                .append(callingInfo == null ? "" : callingInfo.toString())
+                .append(callingInfo == null ? "" : "~~")
                 .append(securityInfo == null ? "" : securityInfo.toString())
                 .append(securityInfo == null ? "" : "~~")
                 .append(deviceInfo == null ? "" : deviceInfo.toString())
