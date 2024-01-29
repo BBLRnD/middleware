@@ -75,7 +75,7 @@ public class ExceptionBlock{
             for (String[] record : records) {
                 recordStrings.add(String.join("|",record));
             }
-            result.append(String.join(" ~ ", recordStrings));
+            result.append(String.join("~", recordStrings));
         }
         result.append("]]");
 

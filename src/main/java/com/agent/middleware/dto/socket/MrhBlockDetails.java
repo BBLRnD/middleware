@@ -24,13 +24,10 @@ public class MrhBlockDetails{
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append("[listName=" +listName+"]");
-        s.append("[numberOfRecs=" +numberOfRecs+"]");
-        s.append("[headerInfo=" + StringUtils.join(List.of(headerInfo), '|') +"]");
-        s.append("[message=" + message+"]");
-        s.append("[curPageNum="+curPageNum+"]");
-        s.append("[maxPageNum="+maxPageNum+"]");
-        s.append("[dataBlocks=");
+        s.append("[listName=").append(listName).append("]").append("[numberOfRecs=").append(numberOfRecs).append("]")
+        .append("[headerInfo=").append(StringUtils.join(List.of(headerInfo), '|')).append("]")
+        .append("[message=").append(message).append("]").append("[curPageNum=").append(curPageNum).append("]")
+        .append("[maxPageNum=").append(maxPageNum).append("]").append("[dataBlocks=");
         for(int i=0;i<numberOfRecs;i++){
             s.append(StringUtils.join(List.of(dataBlock.get(i)), '|'));
             if(i < numberOfRecs-1)

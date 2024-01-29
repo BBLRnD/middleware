@@ -53,14 +53,11 @@ public class ListBlock{
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append("[listBlock=[numberOfRecs=");
-        s.append(numberOfRecs).append("]");
-        s.append("[headerInfo=").append(StringUtils.join(List.of(headerInfo), '|')).append("]");
-        s.append("[message=" + message+"]");
-        s.append("[curPageNum="+curPageNum+"]");
-        s.append("[maxPageNum="+maxPageNum+"]");
-        s.append("[dataBlocks=");
+        StringBuilder s = new StringBuilder("[listBlock=[numberOfRecs=");
+        s.append(numberOfRecs).append("]")
+        .append("[headerInfo=").append(StringUtils.join(List.of(headerInfo), '|')).append("]")
+        .append("[message=").append(message).append("]").append("[curPageNum=").append(curPageNum).append("]")
+        .append("[maxPageNum=").append(maxPageNum).append("]").append("[dataBlocks=");
         for(int i=0;i<numberOfRecs;i++){
             s.append(StringUtils.join(List.of(dataBlock.get(i)), '|'));
             if(i < numberOfRecs-1)

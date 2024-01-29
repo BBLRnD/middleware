@@ -33,7 +33,6 @@ public class MrhBlock{
     }
 
     public MrhBlock mrhBlock(String mrhBlockStr){
-        Long timestamp = new Date().getTime();
         String mrhDetails = mrhBlockStr.split("mrhDetails=", 2)[1].trim();
         String[] mrhDetailList = mrhDetails.trim().split("(?=~\\[)");
         List<MrhBlockDetails> mrhBlockDetailList = new ArrayList<>();
@@ -64,9 +63,6 @@ public class MrhBlock{
         MrhBlock mrhBlock = new MrhBlock();
         mrhBlock.setNumberOfMrh(numberOfMrh);
         mrhBlock.setMrhBlocks(mrhBlockDetailList);
-        Long timestamp1 = new Date().getTime();
-        System.out.println("first time" + timestamp + " Last Time :" + timestamp1);
-        System.out.println("Difference : " + (timestamp1 - timestamp));
         return mrhBlock;
     }
 
