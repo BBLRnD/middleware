@@ -1,18 +1,19 @@
 package com.agent.middleware.dto.socket;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class CallingInfo {
     private String serviceName;
     private String versionInfo;
     private String funcCode;
 
-    public CallingInfo callingInfo(String callingInfoStr) {
+    public CallingInfo(String callingInfoStr, SocketPayload socketPayload) {
+        socketPayload.setCallingInfo(callingInfo(callingInfoStr));
+    }
+
+    public CallingInfo() {
+
+    }
+
+    private CallingInfo callingInfo(String callingInfoStr) {
         CallingInfo callingInfo = new CallingInfo();
         String[] particles = callingInfoStr
                 .split("\\[|\\]|\\|");
@@ -43,5 +44,29 @@ public class CallingInfo {
         result.append("versionInfo=").append(versionInfo).append("|");
         result.append("funcCode=").append(funcCode).append("]]");
         return result.toString();
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getVersionInfo() {
+        return versionInfo;
+    }
+
+    public void setVersionInfo(String versionInfo) {
+        this.versionInfo = versionInfo;
+    }
+
+    public String getFuncCode() {
+        return funcCode;
+    }
+
+    public void setFuncCode(String funcCode) {
+        this.funcCode = funcCode;
     }
 }

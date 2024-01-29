@@ -13,7 +13,11 @@ public class SecurityInfo {
     private String securityToken;
     private String saltValue;
 
-    public SecurityInfo securityInfo(String securityStr) {
+    public SecurityInfo(String securityInfoStr, SocketPayload socketPayload){
+        socketPayload.setSecurityInfo(securityInfo(securityInfoStr));
+    }
+
+    private SecurityInfo securityInfo(String securityStr) {
         SecurityInfo securityInfo = new SecurityInfo();
         String[] keyValuePairs = securityStr.split("\\[|\\||\\]");
         for (String keyValuePair : keyValuePairs) {

@@ -1,6 +1,7 @@
 package com.agent.middleware.dto.socket;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashMap;
@@ -9,10 +10,16 @@ import java.util.Map;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class GenBlock {
     public Map<String, String> formData;
 
-    public GenBlock genBlock(String genBlockString) {
+
+    public GenBlock(String genBlockStr, SocketPayload socketPayload){
+        socketPayload.setGenBlock(genBlock(genBlockStr));
+    }
+
+    private GenBlock genBlock(String genBlockString) {
         GenBlock genBlock = new GenBlock();
         // genBlockString has the format "genDataBlock=[data1=<>|data2=<>]"
         if (genBlockString.startsWith("[genDataBlock=[")) {
@@ -20,17 +27,14 @@ public class GenBlock {
             String[] keyValuePairs = genDataBlockString.split("\\|");
 
             Map<String, String> genDataMap = new HashMap<>();
-
-            System.out.println(genDataMap);
             for (String pair : keyValuePairs) {
                 String[] parts = pair.split("=");
                 if (parts.length == 2) {
                     genDataMap.put(parts[0], parts[1]);
                 }
             }
-//            genBlock.setDataMap(genDataMap);
+            genBlock.setFormData(genDataMap);
         }
-        // Return the GenBlock object
         return genBlock;
     }
 

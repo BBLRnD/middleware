@@ -13,8 +13,11 @@ public class DeviceInfo {
     private String macAddress;
     private String browser;
 
+    public DeviceInfo(String deviceStr, SocketPayload socketPayload){
+        socketPayload.setDeviceInfo(deviceInfo(deviceStr));
+    }
 
-    public DeviceInfo deviceInfo(String deviceStr) {
+    private DeviceInfo deviceInfo(String deviceStr) {
 
         DeviceInfo deviceInfo = new DeviceInfo();
         String[] particles = deviceStr.split("\\[|\\]|\\|");

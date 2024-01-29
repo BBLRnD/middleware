@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -15,9 +14,13 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MrhBlock{
+public class MrhBlock {
     private Integer numberOfMrh;
     private List<MrhBlockDetails> mrhBlocks;
+
+    public MrhBlock(String mrhBlockStr, SocketPayload socketPayload) {
+        socketPayload.setMrhBlock(mrhBlock(mrhBlockStr));
+    }
 
 
     private String extractValue(String input, String key) {
@@ -32,8 +35,7 @@ public class MrhBlock{
         }
     }
 
-    public MrhBlock mrhBlock(String mrhBlockStr){
-        Long timestamp = new Date().getTime();
+    private MrhBlock mrhBlock(String mrhBlockStr) {
         String mrhDetails = mrhBlockStr.split("mrhDetails=", 2)[1].trim();
         String[] mrhDetailList = mrhDetails.trim().split("(?=~\\[)");
         List<MrhBlockDetails> mrhBlockDetailList = new ArrayList<>();
@@ -64,18 +66,17 @@ public class MrhBlock{
         MrhBlock mrhBlock = new MrhBlock();
         mrhBlock.setNumberOfMrh(numberOfMrh);
         mrhBlock.setMrhBlocks(mrhBlockDetailList);
-        Long timestamp1 = new Date().getTime();
-        System.out.println("first time" + timestamp + " Last Time :" + timestamp1);
-        System.out.println("Difference : " + (timestamp1 - timestamp));
         return mrhBlock;
     }
 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append("mrhDataBlock=[numOfMrh="+numberOfMrh+"]");
-        s.append("[mrhDetails="+(mrhBlocks.toString().replaceFirst("\\[","")).
-                replaceFirst("\\,","~"));
+        if (mrhBlocks != null) {
+            s.append("mrhDataBlock=[numOfMrh=" + numberOfMrh + "]");
+            s.append("[mrhDetails=" + (mrhBlocks.toString().replaceFirst("\\[", "")).
+                    replaceFirst("\\,", "~"));
+        }
         return s.toString();
 
     }
