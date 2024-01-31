@@ -74,12 +74,12 @@ public class TestRestController {
 
         // 6. list block
         ListBlock listBlock = new ListBlock();
-        String[] listHeaders = {"role", "desc", "group", "delFlg", "lchgTime"};
         listBlock.setNumberOfRecs(3);
-        listBlock.setHeaderInfo(listHeaders);
-        listBlock.setMessage("Total 4 pages of 33 records found. Current page 1");
         listBlock.setCurPageNum(1);
         listBlock.setMaxPageNum(4);
+        String[] listHeaders = {"role", "desc", "group", "delFlg", "lchgTime"};
+        listBlock.setHeaderInfo(listHeaders);
+        listBlock.setMessage("Total 4 pages of 33 records found. Current page 1");
         List<String[]> listDataBlock = new ArrayList<>();
         String[] dataBlock1 = {"CBS", "Core Banking Systems", "Y", "N", "06-01-2024 12:41:20"};
         String[] dataBlock2 = {"SERDSK", "Service Desk", "N", "N", "06-01-2024 12:41:20"};
@@ -93,22 +93,28 @@ public class TestRestController {
         //7. mrh block
         MrhBlock mrhBlock = new MrhBlock();
         mrhBlock.setNumberOfMrh(2);
-        MrhBlockDetails mrhBlockDetail = new MrhBlockDetails();
-        mrhBlockDetail.setListName("mrhBlockData");
-        mrhBlockDetail.setNumberOfRecs(2);
-        String[] str = new String[]{"role", "desc", "group", "delFlg", "lchgTime"};
-        mrhBlockDetail.setHeaderInfo(str);
-        mrhBlockDetail.setMessage("Hello");
-        mrhBlockDetail.setMaxPageNum(4);
-        mrhBlockDetail.setCurPageNum(1);
-        List<String[]> dataBlocks = new ArrayList<>();
-        String[] value4 = {"CBS", "Core Banking Systems", "Y", "N", "06-01-2024 12:41:20", "abc", "def"};
-        String[] value5 = {"SERDSK", "Service Desk", "N", "N", "06-01-2024 12:41:20", "abc", "def"};
-        String[] value6 = {"DCGRP01", "Data Center", "N", "N", "06-01-2024 12:41:20", "33", "33"};
-        dataBlocks.add(value4);
-        dataBlocks.add(value5);
-        dataBlocks.add(value6);
-        mrhBlockDetail.setDataBlock(dataBlocks);
+
+        List<MrhBlockDetails> mrhBlockDetailsList = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            MrhBlockDetails mrhBlockDetail = new MrhBlockDetails();
+            mrhBlockDetail.setNumberOfRecs(3);
+            mrhBlockDetail.setListName("mrhBlockData1");
+            String[] str = new String[]{"role", "desc", "group", "delFlg", "lchgTime"};
+            mrhBlockDetail.setHeaderInfo(str);
+            mrhBlockDetail.setMessage("Hello");
+            mrhBlockDetail.setMaxPageNum(4);
+            mrhBlockDetail.setCurPageNum(1);
+            List<String[]> dataBlocks = new ArrayList<>();
+            String[] value4 = {"CBS", "Core Banking Systems", "Y", "N", "06-01-2024 12:41:20", "abc", "def"};
+            String[] value5 = {"SERDSK", "Service Desk", "N", "N", "06-01-2024 12:41:20", "abc", "def"};
+            String[] value6 = {"DCGRP01", "Data Center", "N", "N", "06-01-2024 12:41:20", "33", "33"};
+            dataBlocks.add(value4);
+            dataBlocks.add(value5);
+            dataBlocks.add(value6);
+            mrhBlockDetail.setDataBlock(dataBlocks);
+            mrhBlockDetailsList.add(mrhBlockDetail);
+        }
+        mrhBlock.setMrhBlocks(mrhBlockDetailsList);
         socketRequestPayload.setMrhBlock(mrhBlock);
 
         //8. security block

@@ -21,15 +21,20 @@ public class MrhBlockDetails {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("");
-        if (listName != null) {
-            s.append("[listName=").append(listName).append("]").append("[numberOfRecs=").append(numberOfRecs).append("]")
-                    .append("[headerInfo=").append(StringUtils.join(List.of(headerInfo), '|')).append("]")
-                    .append("[message=").append(message).append("]").append("[curPageNum=").append(curPageNum).append("]")
-                    .append("[maxPageNum=").append(maxPageNum).append("]").append("[dataBlocks=");
+        if (dataBlock != null) {
+            s.append("[listName=").append(listName).append("]").append("[numberOfRecs=").append(numberOfRecs).append("]").append("[headerInfo=");
+            for (int i = 0; i < headerInfo.length; i++) {
+                s.append(headerInfo[i]).append("|");
+            }
+            s.deleteCharAt(s.lastIndexOf("|"));
+            s.append("]").append("[message=").append(message).append("]").append("[curPageNum=").append(curPageNum).append("]").append("[maxPageNum=").append(maxPageNum).append("]").append("[dataBlocks=");
             for (int i = 0; i < numberOfRecs; i++) {
-                s.append(StringUtils.join(List.of(dataBlock.get(i)), '|'));
-                if (i < numberOfRecs - 1)
-                    s.append("~");
+                String[] dataBlockStr = dataBlock.get(i);
+                for (int j = 0; j < dataBlockStr.length; j++) {
+                    s.append(dataBlockStr[j]).append("|");
+                }
+                s.deleteCharAt(s.lastIndexOf("|"));
+                if (i < numberOfRecs - 1) s.append("~");
             }
             s.append("]");
         }

@@ -1,13 +1,12 @@
 package com.agent.middleware.dto.socket;
 
-import org.apache.tomcat.util.buf.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-public class ListBlock{
+
+public class ListBlock {
     private Integer numberOfRecs;
     private String[] headerInfo;
     private String message;
@@ -15,7 +14,7 @@ public class ListBlock{
     private Integer maxPageNum;
     private List<String[]> dataBlock;
 
-    public ListBlock(String listBlockStr, SocketPayload socketPayload){
+    public ListBlock(String listBlockStr, SocketPayload socketPayload) {
         socketPayload.setListBlock(listBlock(listBlockStr));
     }
 
@@ -33,19 +32,20 @@ public class ListBlock{
             return null; // Handle the case where the key is not found
         }
     }
-    private ListBlock listBlock(String listBlockString){
-        ListBlock listBlock = new ListBlock();
-        listBlock.setNumberOfRecs(Integer.parseInt(Objects.requireNonNull(extractValue(listBlockString, "numberOfRecs")).replaceAll("]\\[","")));
-        String headerInfos = Objects.requireNonNull(extractValue(listBlockString, "headerInfo")).replace("\\]\\[","");
-        listBlock.setHeaderInfo(headerInfos.split("\\|"));
-        listBlock.setMessage(Objects.requireNonNull(extractValue(listBlockString, "message")).replaceAll("\\]\\[",""));
-        listBlock.setCurPageNum(Integer.parseInt(Objects.requireNonNull(extractValue(listBlockString, "curPageNum")).replaceAll("\\]\\[","")));
-        listBlock.setMaxPageNum(Integer.parseInt(Objects.requireNonNull(extractValue(listBlockString, "maxPageNum")).replaceAll("\\]\\[","")));
 
-        String dataBlocks = Objects.requireNonNull(extractValue(listBlockString, "dataBlocks")).replace("\\]\\[","");
+    private ListBlock listBlock(String listBlockString) {
+        ListBlock listBlock = new ListBlock();
+        listBlock.setNumberOfRecs(Integer.parseInt(Objects.requireNonNull(extractValue(listBlockString, "numberOfRecs")).replaceAll("]\\[", "")));
+        String headerInfos = Objects.requireNonNull(extractValue(listBlockString, "headerInfo")).replace("\\]\\[", "");
+        listBlock.setHeaderInfo(headerInfos.split("\\|"));
+        listBlock.setMessage(Objects.requireNonNull(extractValue(listBlockString, "message")).replaceAll("\\]\\[", ""));
+        listBlock.setCurPageNum(Integer.parseInt(Objects.requireNonNull(extractValue(listBlockString, "curPageNum")).replaceAll("\\]\\[", "")));
+        listBlock.setMaxPageNum(Integer.parseInt(Objects.requireNonNull(extractValue(listBlockString, "maxPageNum")).replaceAll("\\]\\[", "")));
+
+        String dataBlocks = Objects.requireNonNull(extractValue(listBlockString, "dataBlocks")).replace("\\]\\[", "");
         String[] dataBlockList = dataBlocks.split("\\~");
         List<String[]> finalBlocks = new ArrayList<>();
-        for(int i=0; i< dataBlockList.length; i++){
+        for (int i = 0; i < dataBlockList.length; i++) {
             String[] dataBlockData = dataBlockList[i].split("\\|");
             finalBlocks.add(dataBlockData);
         }
@@ -55,17 +55,28 @@ public class ListBlock{
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[listBlock=[numberOfRecs=");
-        s.append(numberOfRecs).append("]")
-        .append("[headerInfo=").append(StringUtils.join(List.of(headerInfo), '|')).append("]")
-        .append("[message=").append(message).append("]").append("[curPageNum=").append(curPageNum).append("]")
-        .append("[maxPageNum=").append(maxPageNum).append("]").append("[dataBlocks=");
-        for(int i=0;i<numberOfRecs;i++){
-            s.append(StringUtils.join(List.of(dataBlock.get(i)), '|'));
-            if(i < numberOfRecs-1)
-                s.append("~");
+        StringBuilder s = new StringBuilder();
+        if (dataBlock != null) {
+            s.append("[listBlock=[numberOfRecs=").append(numberOfRecs).append("]").append("[headerInfo=");
+            for (int i = 0; i < headerInfo.length; i++) {
+                s.append(headerInfo[i]).append("|");
+            }
+            s.deleteCharAt(s.lastIndexOf("|"));
+            s.append("]");
+            s.append("[message=" + message + "]").append("[curPageNum=").append(curPageNum).append("]")
+                    .append("[maxPageNum=").append(maxPageNum).append("]").append("[dataBlocks=");
+            for (int i = 0; i < numberOfRecs; i++) {
+                String[] dataBlockStr = dataBlock.get(i);
+                for (int j = 0; j < dataBlockStr.length; j++) {
+                    s.append(dataBlockStr[j]).append("|");
+                }
+                s.deleteCharAt(s.lastIndexOf("|"));
+                if (i < numberOfRecs - 1)
+                    s.append("~");
+            }
+
+            s.append("]]");
         }
-        s.append("]]");
         return s.toString();
     }
 

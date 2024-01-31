@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
 public class MrhBlock {
     private Integer numberOfMrh;
     private List<MrhBlockDetails> mrhBlocks;
@@ -69,12 +68,12 @@ public class MrhBlock {
     public String toString() {
         StringBuilder s = new StringBuilder();
         if (mrhBlocks != null) {
-            s.append("mrhDataBlock=[numOfMrh=" + numberOfMrh + "]");
-            s.append("[mrhDetails=" + (mrhBlocks.toString().replaceFirst("\\[", "")).
-                    replaceFirst("\\,", "~"));
+            s.append("[mrhBlock=[numOfMrh=").append(numberOfMrh).append("]");
+            //s.append("[mrhDetails=").append(mrhBlocks.toString().replaceFirst("\\[", "")).replaceFirst("\\,", "~")));
+            s.append("[mrhDetails=").append(mrhBlocks.toString().replaceFirst("\\[", "")
+                    .replaceAll("\\,", "~"));
         }
         return s.toString();
-
     }
 
     public Integer getNumberOfMrh() {
