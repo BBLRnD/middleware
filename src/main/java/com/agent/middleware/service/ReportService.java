@@ -12,6 +12,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,9 @@ public class ReportService {
 
     public void exportJasperReport(HttpServletResponse response, Date startDate, Date endDate) throws JRException, IOException {
 
+
         List<Report> reports = reportRepository.findByDateBetween(startDate, endDate);
+
 
         response.setContentType("application/pdf");
 
@@ -42,28 +45,39 @@ public class ReportService {
         JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
     }
 
+
+
     public void exportExcelReport(HttpServletResponse response, Date startDate, Date endDate) throws IOException {
-        List<Report> reports = reportRepository.findByDateBetween(startDate, endDate);
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        response.setContentType("text/xls");
+            List<Report> reports = reportRepository.findByDateBetween(startDate, endDate);
 
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=xls_" + startDate + "_" + endDate + ".xls";
-        response.setHeader(headerKey, headerValue);
 
-        try (PrintWriter writer = response.getWriter()) {
-            writer.println("ID,First Name,Last Name,Street,City, Date");
 
-            for (Report excelReport : reports) {
-                writer.println(
-                                excelReport.getId() + "," +
-                                excelReport.getFirstname() + "," +
-                                excelReport.getLastname() + "," +
-                                excelReport.getStreet() + "," +
-                                excelReport.getCity() + "," +
-                                excelReport.getDate()
-                );
+            response.setContentType("text/xls");
+
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=xls_" + startDate + "_" + endDate + ".xls";
+            response.setHeader(headerKey, headerValue);
+
+            try (PrintWriter writer = response.getWriter()) {
+                writer.println("ID,First Name,Last Name,Street,City, Date");
+
+                for (Report excelReport : reports) {
+                    writer.println(
+                            excelReport.getId() + "," +
+                                    excelReport.getFirstname() + "," +
+                                    excelReport.getLastname() + "," +
+                                    excelReport.getStreet() + "," +
+                                    excelReport.getCity() + "," +
+                                    excelReport.getDate()
+                    );
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Error parsing date strings", e);
         }
     }
 }

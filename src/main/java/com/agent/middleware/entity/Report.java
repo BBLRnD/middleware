@@ -85,5 +85,4 @@ public class Report {
     public void setDate(Date date) {
         this.date = date;
     }
-
 }

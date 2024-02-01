@@ -6,11 +6,12 @@ import com.agent.middleware.service.ReportService;
 import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -24,25 +25,42 @@ public class ReportRestController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/getReports")
+    @GetMapping("/get-reports")
     public List<Report> getReports() {
         List<Report> reports = (List<Report>) reportRepository.findAll();
         return reports;
     }
 
-    @GetMapping("/public/pdfReport")
+    @GetMapping("/public/pdf-report")
     public void createPDF(
+
             HttpServletResponse response,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws IOException, JRException {
+            @RequestParam String startDateStr,
+            @RequestParam String endDateStr) throws IOException, JRException, ParseException{
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = dateFormat.parse(startDateStr);
+        Date endDate = dateFormat.parse(endDateStr);
+
         reportService.exportJasperReport(response, startDate, endDate);
+
+
     }
 
-    @GetMapping("/public/excelReport")
+
+
+    @GetMapping("/public/excel-report")
     public void createExcel(
             HttpServletResponse response,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws IOException {
+            @RequestParam String startDateStr,
+            @RequestParam String endDateStr) throws IOException, ParseException {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = dateFormat.parse(startDateStr);
+        Date endDate = dateFormat.parse(endDateStr);
+
         reportService.exportExcelReport(response, startDate, endDate);
     }
+
+
 }
