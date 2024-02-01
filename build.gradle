@@ -38,6 +38,8 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'org.flywaydb', name: 'flyway-core', version: '10.4.1'
 	implementation group: 'org.flywaydb', name: 'flyway-mysql', version: '10.4.1'
+	implementation group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.12.2'
+	implementation 'com.lowagie:itext:2.1.7'
 
 }
 
