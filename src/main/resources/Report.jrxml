@@ -12,9 +12,18 @@
 			<style mode="Opaque" backcolor="#F0EFEF"/>
 		</conditionalStyle>
 	</style>
+
+	<parameter name="startDateStr" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDateStr" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+
 	<queryString>
-		<![CDATA[SELECT * FROM ADDRESS]]>
+		<![CDATA[SELECT * FROM REPORT]]>
 	</queryString>
+
 	<field name="id" class="java.lang.Integer"/>
 	<field name="firstname" class="java.lang.String"/>
 	<field name="lastname" class="java.lang.String"/>
@@ -28,27 +37,40 @@
 		<band height="105" splitType="Stretch">
 			<frame>
 				<reportElement positionType="FixRelativeToBottom" mode="Opaque" x="0" y="0" width="555" height="95" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="fb71756f-afef-4121-94c0-419f6b87bb4c"/>
-				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="70" y="20" width="420" height="49" backcolor="#030303" uuid="4813cfea-3f27-4fc0-8b58-a929bcf847ef">
-						<property name="local_mesure_unitwidth" value="pixel"/>
-					</reportElement>
-					<textElement textAlignment="Center" markup="html">
-						<font fontName="Times New Roman" size="26"/>
-						<paragraph lineSpacing="Proportional"/>
-					</textElement>
-					<text><![CDATA[Brac Bank]]></text>
-				</staticText>
 				<image scaleImage="FillFrame" hAlign="Center" isUsingCache="false">
-					<reportElement x="450" y="0" width="101" height="69" uuid="61318855-ccd8-4012-9223-6fcf4173ef66"/>
+					<reportElement x="0" y="0" width="130" height="69" uuid="61318855-ccd8-4012-9223-6fcf4173ef66"/>
 					<imageExpression><![CDATA["C:/Users/Choyon/Downloads/brac_bank.png"]]></imageExpression>
 				</image>
 				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement x="410" y="69" width="144" height="20" forecolor="#030000" backcolor="#000000" uuid="34316e52-97a0-4626-ae08-0cc9eaa43a74"/>
-					<textElement textAlignment="Right">
-						<font size="12"/>
+					<reportElement x="0" y="80" width="199" height="20" forecolor="#030000" backcolor="#000000" uuid="34316e52-97a0-4626-ae08-0cc9eaa43a74"/>
+					<textElement textAlignment="Left">
+						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Report Generated on " + new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
 				</textField>
+				<image>
+					<reportElement x="420" y="29" width="134" height="50" uuid="52b69ad0-ff4c-4b54-9e0c-a8011845f69c"/>
+					<imageExpression><![CDATA["C:/Users/Choyon/OneDrive/Desktop/agent-logo.png"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement x="225" y="69" width="105" height="31" uuid="557c16bd-121e-408e-a228-bbe86a4fedb1"/>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="10"/>
+					</textElement>
+					<text><![CDATA[Branch name: N/A
+Outlet Name: N/A]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="FixRelativeToBottom" x="150" y="10" width="264" height="40" backcolor="#030303" uuid="4813cfea-3f27-4fc0-8b58-a929bcf847ef">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+						<font fontName="Times New Roman" size="12" isBold="true"/>
+						<paragraph lineSpacing="Proportional" lineSpacingSize="1.5"/>
+					</textElement>
+					<text><![CDATA[Account Opening Individual Report
+Agent Banking Department, BRAC Bank PLC]]></text>
+				</staticText>
 			</frame>
 		</band>
 	</title>
