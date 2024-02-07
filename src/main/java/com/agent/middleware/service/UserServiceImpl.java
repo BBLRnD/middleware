@@ -61,4 +61,5 @@ public class UserServiceImpl implements UserService {
         UserInfo userInfo = userRepository.findByUsername(username).orElseThrow(() -> new SecurityException("User or password not matched"));
         return new CustomUserDetails(userInfo, userRoleRepository, roleRepository, userInfo.getId());
     }
+
 }

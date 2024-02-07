@@ -1,29 +1,15 @@
 package com.agent.middleware.entity;
 
-import jakarta.persistence.*;
-
 import java.util.Date;
 
-@Entity
-@Table(name = "report")
+
 public class Report {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(name = "firstname")
     private String firstname;
-    @Column(name = "lastname")
     private String lastname;
-    @Column(name = "street")
     private String street;
-    @Column(name = "city")
     private String city;
-
-    @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-
 
     public Report() {
 

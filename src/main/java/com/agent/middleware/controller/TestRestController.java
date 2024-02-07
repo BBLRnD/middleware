@@ -16,6 +16,9 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/api/v1")
 public class TestRestController {
+    public TestRestController() {
+
+    }
 
     @SneakyThrows
     @PostMapping("/public/test")

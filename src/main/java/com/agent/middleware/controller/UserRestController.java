@@ -9,6 +9,7 @@ import com.agent.middleware.entity.RefreshToken;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
+import com.bbl.util.model.DeviceInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,14 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserRestController {
 
     private final UserService userService;
-
+    private final DeviceInfo deviceInfo;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
 
-    public UserRestController(UserService userService, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
+    public UserRestController(UserService userService, DeviceInfo deviceInfo, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.userService = userService;
+        this.deviceInfo = deviceInfo;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.refreshTokenService = refreshTokenService;
@@ -53,7 +55,8 @@ public class UserRestController {
 
     @PostMapping(value = "/public/login")
     public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) throws JsonProcessingException {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
                 userLoginDto.getPassword()));
         if (authentication.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(authentication);

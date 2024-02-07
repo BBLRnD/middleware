@@ -3,10 +3,10 @@ package com.agent.middleware.repository;
 
 import com.agent.middleware.entity.Menu;
 import com.agent.middleware.enums.Module;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface MenuRepository extends CrudRepository<Menu, String> {
+public interface MenuRepository {
+    Menu save(Menu menu);
     List<Menu> findAllByModuleAndLayer(Module module, Integer layer);
 }
