@@ -79,13 +79,13 @@ public class UserRestController {
     @PostMapping("/user/refresh-token")
     @SneakyThrows
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
-        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
-        refreshTokenService.verifyExpiration(refreshToken);
+//        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
+//        refreshTokenService.verifyExpiration(refreshToken);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String jwtToken = jwtTokenProvider.generateToken(authentication);
         JwtResponseDto jwtResponseDto = new JwtResponseDto();
         jwtResponseDto.setJwtToken(jwtToken);
-        jwtResponseDto.setRefreshToken(refreshToken.getToken());
+        jwtResponseDto.setRefreshToken(refreshTokenRequestDTO.getRefreshToken());
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
         jwtResponseDto.setFullName(userInfo.getFullName());
         jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {
