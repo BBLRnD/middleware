@@ -9,10 +9,12 @@ import com.agent.middleware.entity.RefreshToken;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
+import com.agent.middleware.util.DecryptUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 public class UserRestController {
+    @Value("${spring.datasource.privateKeyString}")
+    private String privateKeyString;
 
     private final UserService userService;
 
@@ -53,6 +57,20 @@ public class UserRestController {
 
     @PostMapping(value = "/public/login")
     public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) throws JsonProcessingException {
+        String encryptedPassword = userLoginDto.getPassword();
+
+        System.out.println(encryptedPassword);
+
+        String decryptedPassword = new String();
+
+        try {
+            decryptedPassword = DecryptUtil.doDecrypt(encryptedPassword, privateKeyString);
+            System.out.println("Decrypted text: " + decryptedPassword);
+        } catch (Exception e) {
+            System.err.println("Decryption error: " + e.getMessage());
+        }
+
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
                 userLoginDto.getPassword()));
         if (authentication.isAuthenticated()) {
