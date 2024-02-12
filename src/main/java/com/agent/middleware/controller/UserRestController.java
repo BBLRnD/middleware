@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("/api/v1")
 public class UserRestController {
@@ -67,8 +69,7 @@ public class UserRestController {
             jwtResponseDto.setRefreshToken(refreshToken.getToken());
             UserInfo userInfo = (UserInfo) authentication.getPrincipal();
             jwtResponseDto.setFullName(userInfo.getFullName());
-            jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {
-            }));
+            jwtResponseDto.setModules(Collections.singleton(userInfo.getModules()));
             return jwtResponseDto;
         } else {
             throw new UsernameNotFoundException("invalid user request..!!");

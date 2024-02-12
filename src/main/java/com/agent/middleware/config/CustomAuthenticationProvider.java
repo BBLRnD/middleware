@@ -2,7 +2,6 @@ package com.agent.middleware.config;
 
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
-import com.agent.middleware.repository.UserRepository;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.model.CallingInfo;
 import com.bbl.util.model.DeviceInfo;
@@ -25,56 +24,52 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @SneakyThrows
     CustomUserDetails isValidUser(String username, String password) {
-//        SocketPayload socketRequestPayload = SocketPayload.getInstance();
-//        //1. calling info
-//        CallingInfo callingInfo = CallingInfo.getInstance();
-//        callingInfo.setVersionInfo("1.0.0");
-//        callingInfo.setFuncCode("M");
-//        callingInfo.setServiceName("DoLogin");
-//        socketRequestPayload.setCallingInfo(callingInfo);
-//
-//        //2. Device Info
-//        DeviceInfo deviceInfo = DeviceInfo.getInstance();
-//        deviceInfo.setIpAddress(InetAddress.getLocalHost().getHostAddress());
-//        socketRequestPayload.setDeviceInfo(deviceInfo);
-//
-//        //3. gen block
-//        GenDataBlock genDataBlock = GenDataBlock.getInstance();
-//        HashMap<String, String> formData = new HashMap<>();
-//        formData.put("loginId", username);
-//        formData.put("loginKey", password);
-//        genDataBlock.setFormData(formData);
-//        socketRequestPayload.setGenDataBlock(genDataBlock);
-//
-//        String payloadAsString = socketRequestPayload.toString();
-//        log.info(payloadAsString);
-//
-//        // Socket Communication with app
-//        LimoSocketClient locLimoSocketClient = new LimoSocketClient();
-//        String toReceive = locLimoSocketClient.processRequest(payloadAsString);
-//        log.info(toReceive);
-//
-//        SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
-//
-//        System.out.println(socketPayloadResponse.getStatusBlock().getResponseCode());
-//        if (socketPayloadResponse.getStatusBlock().
-//                getResponseCode().equalsIgnoreCase("SUCCESS")) {
-//            UserInfo userInfo = new UserInfo();
-//            userInfo.setModules(socketPayloadResponse.getGenDataBlock().getValueByKey("appId"));
-//            CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
-//            return customUserDetails;
-//        } else {
-//            log.info(socketPayloadResponse.getStatusBlock().getResponseMessage());
-//        }
+        SocketPayload socketRequestPayload = SocketPayload.getInstance();
+        //1. calling info
+        CallingInfo callingInfo = CallingInfo.getInstance();
+        callingInfo.setVersionInfo("1.0.0");
+        callingInfo.setFuncCode("M");
+        callingInfo.setServiceName("DoLogin");
+        socketRequestPayload.setCallingInfo(callingInfo);
 
-        UserInfo userInfo = new UserInfo();
-        userInfo.setId(202);
-        userInfo.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
-        userInfo.setFullName("Super Admin");
-        userInfo.setRoles(Arrays.asList("USER","S_ADMIN"));
-        userInfo.setUsername(username);
-        CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
-        return customUserDetails;
+        //2. Device Info
+        DeviceInfo deviceInfo = DeviceInfo.getInstance();
+        deviceInfo.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+        socketRequestPayload.setDeviceInfo(deviceInfo);
+
+        //3. gen block
+        GenDataBlock genDataBlock = GenDataBlock.getInstance();
+        HashMap<String, String> formData = new HashMap<>();
+        formData.put("loginId", username);
+        formData.put("loginKey", password);
+        genDataBlock.setFormData(formData);
+        socketRequestPayload.setGenDataBlock(genDataBlock);
+
+        String payloadAsString = socketRequestPayload.toString();
+        log.info(payloadAsString);
+
+        // Socket Communication with app
+        LimoSocketClient locLimoSocketClient = new LimoSocketClient();
+        String toReceive = locLimoSocketClient.processRequest(payloadAsString);
+        log.info(toReceive);
+
+        SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
+
+        System.out.println(socketPayloadResponse.getStatusBlock().getResponseCode());
+        if (socketPayloadResponse.getStatusBlock().
+                getResponseCode().equalsIgnoreCase("SUCCESS")) {
+            UserInfo userInfo = new UserInfo();
+            userInfo.setId(202);
+            userInfo.setModules(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
+            userInfo.setFullName(username);
+            userInfo.setRoles(Arrays.asList("USER","S_ADMIN"));
+            userInfo.setUsername(username);
+            CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
+            return customUserDetails;
+        } else {
+            log.info(socketPayloadResponse.getStatusBlock().getResponseMessage());
+        }
+        return null;
     }
 
     @Override
