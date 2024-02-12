@@ -9,6 +9,7 @@ import com.agent.middleware.entity.RefreshToken;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
+import com.bbl.util.model.DeviceInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,19 +26,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("/api/v1")
 public class UserRestController {
 
     private final UserService userService;
-
+    private final DeviceInfo deviceInfo;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
 
-    public UserRestController(UserService userService, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
+    public UserRestController(UserService userService, DeviceInfo deviceInfo, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.userService = userService;
+        this.deviceInfo = deviceInfo;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.refreshTokenService = refreshTokenService;
@@ -53,7 +57,8 @@ public class UserRestController {
 
     @PostMapping(value = "/public/login")
     public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) throws JsonProcessingException {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
                 userLoginDto.getPassword()));
         if (authentication.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -64,8 +69,7 @@ public class UserRestController {
             jwtResponseDto.setRefreshToken(refreshToken.getToken());
             UserInfo userInfo = (UserInfo) authentication.getPrincipal();
             jwtResponseDto.setFullName(userInfo.getFullName());
-            jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {
-            }));
+            jwtResponseDto.setModules(Collections.singleton(userInfo.getModules()));
             return jwtResponseDto;
         } else {
             throw new UsernameNotFoundException("invalid user request..!!");
@@ -76,13 +80,13 @@ public class UserRestController {
     @PostMapping("/user/refresh-token")
     @SneakyThrows
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
-        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
-        refreshTokenService.verifyExpiration(refreshToken);
+//        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
+//        refreshTokenService.verifyExpiration(refreshToken);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String jwtToken = jwtTokenProvider.generateToken(authentication);
         JwtResponseDto jwtResponseDto = new JwtResponseDto();
         jwtResponseDto.setJwtToken(jwtToken);
-        jwtResponseDto.setRefreshToken(refreshToken.getToken());
+        jwtResponseDto.setRefreshToken(refreshTokenRequestDTO.getRefreshToken());
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
         jwtResponseDto.setFullName(userInfo.getFullName());
         jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {

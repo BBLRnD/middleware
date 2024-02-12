@@ -3,9 +3,7 @@ package com.agent.middleware.service;
 import com.agent.middleware.dto.UserRegisterDto;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
-import com.agent.middleware.repository.RoleRepository;
 import com.agent.middleware.repository.UserRepository;
-import com.agent.middleware.repository.UserRoleRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,13 +14,9 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final UserRoleRepository userRoleRepository;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, UserRoleRepository userRoleRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -59,6 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfo loadUserByUsername(String username) throws UsernameNotFoundException {
         UserInfo userInfo = userRepository.findByUsername(username).orElseThrow(() -> new SecurityException("User or password not matched"));
-        return new CustomUserDetails(userInfo, userRoleRepository, roleRepository, userInfo.getId());
+        return new CustomUserDetails(userInfo);
     }
+
 }

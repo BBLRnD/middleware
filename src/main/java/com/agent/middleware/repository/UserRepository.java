@@ -1,13 +1,13 @@
 package com.agent.middleware.repository;
 
 import com.agent.middleware.entity.UserInfo;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
-public interface UserRepository extends CrudRepository<UserInfo, Long> {
-
+public interface UserRepository{
     Optional<UserInfo> findByUsername(String username);
+
+    Optional<UserInfo> findById(Long id);
+
+    void save(UserInfo userInfo);
 }

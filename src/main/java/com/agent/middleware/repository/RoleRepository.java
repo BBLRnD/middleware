@@ -1,11 +1,15 @@
 package com.agent.middleware.repository;
 
 import com.agent.middleware.entity.Role;
-import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface RoleRepository extends CrudRepository<Role, Long> {
 
+public interface RoleRepository{
+
+    Role save(Role role);
+    List<Role> saveAll(List<Role> roleList);
+    Optional<Role> findById(Long id);
     Optional<Role> findByName(String name);
 }

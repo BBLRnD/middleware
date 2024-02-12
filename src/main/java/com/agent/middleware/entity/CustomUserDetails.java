@@ -1,39 +1,33 @@
 package com.agent.middleware.entity;
 
 
-import com.agent.middleware.repository.RoleRepository;
-import com.agent.middleware.repository.UserRoleRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class CustomUserDetails extends UserInfo implements UserDetails {
 
     private String username;
-    private String password;
     private String modules;
     private String fullName;
+    private List<String> userRoles;
     Collection<? extends GrantedAuthority> authorities;
-    private final UserRoleRepository userRoleRepository;
-    private final RoleRepository roleRepository;
 
-    public CustomUserDetails(UserInfo byUsername, UserRoleRepository userRoleRepository, RoleRepository roleRepository, long userId) {
+
+    public CustomUserDetails(UserInfo byUsername) {
         this.username = byUsername.getUsername();
-        this.password = byUsername.getPassword();
         this.modules = byUsername.getModules();
         this.fullName = byUsername.getFullName();
-        this.userRoleRepository = userRoleRepository;
-        this.roleRepository = roleRepository;
+        this.userRoles = byUsername.getRoles();
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        List<UserRole> userRoleList = this.userRoleRepository.findAllByUserId(userId).orElse(new ArrayList<>());
-        if (userRoleList.size() > 0) {
-            userRoleList.forEach(u -> {
-                Role role = this.roleRepository.findById(u.getRoleId()).orElseThrow(() -> new RuntimeException("Role missing"));
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-            });
+        for (String role : userRoles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         }
         this.authorities = authorities;
     }
@@ -41,11 +35,6 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -62,6 +51,7 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     public String getFullName() {
         return fullName;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

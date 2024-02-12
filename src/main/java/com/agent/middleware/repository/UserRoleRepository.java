@@ -1,14 +1,15 @@
 package com.agent.middleware.repository;
 
 import com.agent.middleware.entity.UserRole;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface UserRoleRepository extends CrudRepository<UserRole, Long> {
+
+public interface UserRoleRepository {
+
+    UserRole save(UserRole userRole);
+    List<UserRole> saveAll(List<UserRole> userRoleList);
 
     Optional<List<UserRole>> findAllByUserId(long id);
 }

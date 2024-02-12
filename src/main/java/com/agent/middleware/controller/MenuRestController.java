@@ -33,13 +33,6 @@ public class MenuRestController {
     @GetMapping("/menu/{module}")
     public MenuResponseDto getByUserType(@PathVariable("module") String modulePath) {
         Module module = Module.getModuleByPath(modulePath);
-        List<MenuDto> layerZero = menuService.getAllByUserTypeAndLayer(module, 0);
-        List<MenuDto> layerOne = menuService.getAllByUserTypeAndLayer(module, 1);
-        List<MenuDto> layerTwo = menuService.getAllByUserTypeAndLayer(module, 2);
-        MenuResponseDto menuResponseDto = new MenuResponseDto();
-        menuResponseDto.setLayerZero(layerZero);
-        menuResponseDto.setLayerOne(layerOne);
-        menuResponseDto.setLayerTwo(layerTwo);
-        return menuResponseDto;
+        return menuService.getAllByModule(module);
     }
 }
