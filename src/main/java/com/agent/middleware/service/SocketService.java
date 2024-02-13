@@ -1,6 +1,6 @@
 package com.agent.middleware.service;
 
-import com.agent.middleware.dto.socket.SocketPayload;
+import com.bbl.util.model.SocketPayload;
 
 public interface SocketService {
 

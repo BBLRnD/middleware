@@ -1,6 +1,7 @@
 package com.agent.middleware.service;
 
 import com.agent.middleware.dto.menu.MenuDto;
+import com.agent.middleware.dto.menu.MenuResponseDto;
 import com.agent.middleware.entity.Menu;
 import com.agent.middleware.enums.Module;
 import com.agent.middleware.repository.MenuRepository;
@@ -30,12 +31,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuDto> getAllByUserTypeAndLayer(Module module, Integer layer) {
-        List<Menu> menus = menuRepository.findAllByModuleAndLayer(module, layer);
-        List<MenuDto> dtos = menus
-                .stream()
-                .map(menu -> modelMapper.map(menu, MenuDto.class))
-                .collect(Collectors.toList());
-        return dtos;
+    public MenuResponseDto getAllByModule(Module module) {
+        return menuRepository.findAllByModule(module);
     }
 }
