@@ -11,7 +11,6 @@ import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
 import com.agent.middleware.util.DecryptUtil;
 import com.bbl.util.model.DeviceInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -35,7 +34,6 @@ import java.util.Collections;
 public class UserRestController {
     @Value("${spring.datasource.privateKeyString}")
     private String privateKeyString;
-
     private final UserService userService;
     private final DeviceInfo deviceInfo;
     private final AuthenticationManager authenticationManager;
@@ -60,25 +58,16 @@ public class UserRestController {
     }
 
     @PostMapping(value = "/public/login")
-    public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) throws JsonProcessingException {
-        String encryptedPassword = userLoginDto.getPassword();
-
-        System.out.println(encryptedPassword);
-
-        String decryptedPassword = new String();
-
+    public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) {
         try {
-            decryptedPassword = DecryptUtil.doDecrypt(encryptedPassword, privateKeyString);
-            System.out.println("Decrypted text: " + decryptedPassword);
+            userLoginDto.setPassword(DecryptUtil.decryptRSA(userLoginDto.getPassword(), privateKeyString));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             System.err.println("Decryption error: " + e.getMessage());
         }
-
-
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
-                userLoginDto.getPassword()));
+                        userLoginDto.getPassword()));
         if (authentication.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             final String jwtToken = jwtTokenProvider.generateToken(authentication);
