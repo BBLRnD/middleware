@@ -2,6 +2,7 @@ package com.agent.middleware.config;
 
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
+import com.agent.middleware.exception.ABException;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.model.CallingInfo;
 import com.bbl.util.model.DeviceInfo;
@@ -84,7 +85,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                     null,
                     customUserDetails.getAuthorities());
         } else {
-            throw new BadCredentialsException("Incorrect user credentials !!");
+            throw new ABException.AuthenticationException("Invalid User/Password !!");
         }
     }
 
