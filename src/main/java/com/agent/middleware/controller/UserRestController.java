@@ -7,6 +7,7 @@ import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.dto.UserRegisterDto;
 import com.agent.middleware.entity.RefreshToken;
 import com.agent.middleware.entity.UserInfo;
+import com.agent.middleware.exception.ABException;
 import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
 import com.agent.middleware.util.DecryptUtil;
@@ -80,7 +81,7 @@ public class UserRestController {
             jwtResponseDto.setModules(Collections.singleton(userInfo.getModules()));
             return jwtResponseDto;
         } else {
-            throw new UsernameNotFoundException("invalid user request..!!");
+            throw new ABException.AuthenticationException("Invalid User/Password !!");
         }
     }
 
