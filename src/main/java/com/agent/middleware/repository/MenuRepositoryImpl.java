@@ -6,21 +6,23 @@ import com.agent.middleware.entity.Menu;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.enums.MenuType;
 import com.agent.middleware.enums.Module;
+import com.agent.middleware.service.UserServiceImpl;
 import com.agent.middleware.util.CommonUtil;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.model.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class MenuRepositoryImpl implements MenuRepository{
 
+    @Autowired
+    UserServiceImpl userService;
     @Override
     public Menu save(Menu menu) {
         return null;
@@ -28,6 +30,8 @@ public class MenuRepositoryImpl implements MenuRepository{
 
     @Override
     public MenuResponseDto findAllByModule(Module module) {
+
+        UserInfo loggedInUser = userService.getLoggedInUser();
 
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
@@ -40,16 +44,14 @@ public class MenuRepositoryImpl implements MenuRepository{
 
         SecurityInfo securityInfo = SecurityInfo.getInstance();
         // need to make dynamic
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserInfo userInfo =(UserInfo) authentication.getPrincipal();
-        securityInfo.setUserId(userInfo.getUsername());
+        securityInfo.setUserId(loggedInUser.getUsername());
         socketRequestPayload.setSecurityInfo(securityInfo);
 
         //3. gen block
         GenDataBlock genDataBlock = GenDataBlock.getInstance();
         HashMap<String, String> formData = new HashMap<>();
         // need to make dynamic
-        formData.put("applId","OPERATION");
+        formData.put("applId",loggedInUser.getUserApplId());
         genDataBlock.setFormData(formData);
         socketRequestPayload.setGenDataBlock(genDataBlock);
 
@@ -76,10 +78,7 @@ public class MenuRepositoryImpl implements MenuRepository{
         List<MenuDto> layerZero = new ArrayList<>();
         List<MenuDto> layerOne = new ArrayList<>();
         List<MenuDto> layerTwo = new ArrayList<>();
-        List<String[]> dataBlock = (listBlock == null ? new ArrayList<>(): listBlock.getDataBlock());
-        if(dataBlock.size()<= 0){
-            return new MenuResponseDto();
-        }
+        List<String[]> dataBlock = listBlock.getDataBlock();
         Map<String, Integer> header = CommonUtil.headerMap(listBlock.getHeaderInfo());
 
         for(String[] strings: dataBlock)
