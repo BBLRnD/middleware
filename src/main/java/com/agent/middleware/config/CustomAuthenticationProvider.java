@@ -61,7 +61,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
             UserInfo userInfo = new UserInfo();
             userInfo.setId(202);
-            userInfo.setModules(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
+            userInfo.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
+            userInfo.setUserApplId(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
             userInfo.setFullName(username);
             userInfo.setRoles(Arrays.asList("USER","S_ADMIN"));
             userInfo.setUsername(username);
@@ -69,6 +70,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             return customUserDetails;
         } else {
             log.info(socketPayloadResponse.getStatusBlock().getResponseMessage());
+            //throw new ABException.AuthenticationException(socketPayloadResponse.getStatusBlock().getResponseMessage());
         }
         return null;
     }

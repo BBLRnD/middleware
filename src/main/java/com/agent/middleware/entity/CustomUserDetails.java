@@ -14,6 +14,7 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
 
     private String username;
     private String modules;
+    private String userApplId;
     private String fullName;
     private List<String> userRoles;
     Collection<? extends GrantedAuthority> authorities;
@@ -24,6 +25,7 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
         this.modules = byUsername.getModules();
         this.fullName = byUsername.getFullName();
         this.userRoles = byUsername.getRoles();
+        this.userApplId = byUsername.getUserApplId();
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         for (String role : userRoles) {
