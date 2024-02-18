@@ -1,5 +1,6 @@
 package com.agent.middleware.repository;
 
+import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ public class UserRepositoryImpl implements UserRepository {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(202);
         userInfo.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
+        userInfo.setUserApplId("OPERATION");
         userInfo.setFullName("Super Admin");
         userInfo.setRoles(Arrays.asList("USER","S_ADMIN"));
         userInfo.setUsername(username);

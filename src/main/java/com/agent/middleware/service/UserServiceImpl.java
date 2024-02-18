@@ -6,6 +6,8 @@ import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfo getByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Username Not Found"));
+    }
+
+    @Override
+    public UserInfo getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserInfo userInfo = (UserInfo) authentication.getPrincipal();
+        return userInfo;
     }
 
     @Override
