@@ -3,11 +3,14 @@ package com.agent.middleware.repository;
 import com.agent.middleware.dto.menu.MenuDto;
 import com.agent.middleware.dto.menu.MenuResponseDto;
 import com.agent.middleware.entity.Menu;
+import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.enums.MenuType;
 import com.agent.middleware.enums.Module;
 import com.agent.middleware.util.CommonUtil;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.model.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -37,7 +40,9 @@ public class MenuRepositoryImpl implements MenuRepository{
 
         SecurityInfo securityInfo = SecurityInfo.getInstance();
         // need to make dynamic
-        securityInfo.setUserId("ADMIN1");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserInfo userInfo =(UserInfo) authentication.getPrincipal();
+        securityInfo.setUserId(userInfo.getUsername());
         socketRequestPayload.setSecurityInfo(securityInfo);
 
         //3. gen block
@@ -71,7 +76,10 @@ public class MenuRepositoryImpl implements MenuRepository{
         List<MenuDto> layerZero = new ArrayList<>();
         List<MenuDto> layerOne = new ArrayList<>();
         List<MenuDto> layerTwo = new ArrayList<>();
-        List<String[]> dataBlock = listBlock.getDataBlock();
+        List<String[]> dataBlock = (listBlock == null ? new ArrayList<>(): listBlock.getDataBlock());
+        if(dataBlock.size()<= 0){
+            return new MenuResponseDto();
+        }
         Map<String, Integer> header = CommonUtil.headerMap(listBlock.getHeaderInfo());
 
         for(String[] strings: dataBlock)
