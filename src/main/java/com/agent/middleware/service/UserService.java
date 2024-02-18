@@ -12,4 +12,6 @@ public interface UserService extends UserDetailsService {
     UserInfo getById(Long id);
 
     UserInfo getByUsername(String username);
+
+    UserInfo getLoggedInUser();
 }

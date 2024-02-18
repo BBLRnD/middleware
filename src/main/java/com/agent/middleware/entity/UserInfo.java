@@ -22,6 +22,7 @@ public class UserInfo implements UserDetails {
     @JsonIgnore
     private String password;
     private String modules;
+    private String userApplId;
     private List<String> roles;
 
     @Override
