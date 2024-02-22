@@ -1,6 +1,5 @@
 package com.agent.middleware.entity;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +13,16 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
 
     private String username;
     private String modules;
+
     private String userApplId;
     private String fullName;
-    private List<String> userRoles;
+
+    private String userId;
+    private String sessionId;
+    private String securityToken;
+    private String saltValue;
+    private String prefLangCode;
+    private List<String> roles;
     Collection<? extends GrantedAuthority> authorities;
 
 
@@ -24,11 +30,18 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
         this.username = byUsername.getUsername();
         this.modules = byUsername.getModules();
         this.fullName = byUsername.getFullName();
-        this.userRoles = byUsername.getRoles();
+        this.roles = byUsername.getRoles();
         this.userApplId = byUsername.getUserApplId();
+        // Security Token
+        this.userId = byUsername.getUserId();
+        this.sessionId = byUsername.getSessionId();
+        this.securityToken = byUsername.getSecurityToken();
+        this.saltValue = byUsername.getSaltValue();
+        // pref Language Code
+        this.prefLangCode = byUsername.getPrefLangCode();
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        for (String role : userRoles) {
+        for (String role : roles) {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         }
         this.authorities = authorities;
@@ -53,6 +66,42 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     public String getFullName() {
         return fullName;
     }
+
+    @Override
+    public String getUserApplId() {return userApplId;}
+
+    @Override
+    public String getUserId() {return userId;}
+
+    @Override
+    public void setUserId(String userId) {this.userId = userId;}
+
+    @Override
+    public String getSessionId() {return sessionId;}
+
+    @Override
+    public void setSessionId(String sessionId) {this.sessionId = sessionId;}
+
+    @Override
+    public String getSecurityToken() {return securityToken;}
+
+    @Override
+    public void setSecurityToken(String securityToken) {this.securityToken = securityToken;}
+
+    @Override
+    public String getSaltValue() {return saltValue;}
+
+    @Override
+    public void setSaltValue(String saltValue) {
+        this.saltValue = saltValue;
+    }
+
+    @Override
+    public String getPrefLangCode() {return prefLangCode;}
+
+    @Override
+    public void setPrefLangCode(String prefLangCode) {this.prefLangCode = prefLangCode;}
+
 
     @Override
     public boolean isAccountNonExpired() {

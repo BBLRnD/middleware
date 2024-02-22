@@ -30,21 +30,24 @@ public class ABException {
     }
     public static class NotFoundException extends ABServiceException {
         public NotFoundException(String message) {
-
             super(HttpStatus.NOT_FOUND.value(), message);
         }
     }
     public static class InvalidDateFormatException extends ABServiceException {
         public InvalidDateFormatException(String message) {
-
             super(HttpStatus.BAD_REQUEST.value(), message);
         }
     }
 
     public static class InvalidDataException extends ABServiceException {
         public InvalidDataException(String message) {
-
             super(HttpStatus.BAD_REQUEST.value(), message);
+        }
+    }
+
+    public static class GeneralException extends ABServiceException {
+        public GeneralException(int code,String message) {
+            super(code, message);
         }
     }
 }
