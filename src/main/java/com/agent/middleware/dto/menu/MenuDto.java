@@ -5,6 +5,7 @@ import com.agent.middleware.enums.MenuType;
 import com.agent.middleware.enums.Module;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 @Data
 @NoArgsConstructor

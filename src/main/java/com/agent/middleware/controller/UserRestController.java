@@ -22,7 +22,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,6 +85,12 @@ public class UserRestController {
     }
 
     @PreAuthorize("hasRole('USER')")
+    @PostMapping("/public/force-login")
+    public HttpStatus forceLogIn() {
+        return HttpStatus.OK;
+    }
+
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/refresh-token")
     @SneakyThrows
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
@@ -105,9 +110,8 @@ public class UserRestController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/revoke-token")
-    public HttpStatus revokeToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
-        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
-        refreshTokenService.deleteRefreshToken(refreshToken);
+    public HttpStatus logout(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
+        refreshTokenService.deleteRefreshToken();
         return HttpStatus.OK;
     }
 }

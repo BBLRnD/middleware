@@ -18,11 +18,22 @@ public class UserInfo implements UserDetails {
 
     private long id;
     private String fullName;
+    // login param
     private String username;
     @JsonIgnore
     private String password;
+
     private String modules;
     private String userApplId;
+    // Security Token
+    private String userId;
+    private String sessionId;
+    private String securityToken;
+    private String saltValue;
+
+    // user prefered Language Code
+    private String prefLangCode;
+
     private List<String> roles;
 
     @Override

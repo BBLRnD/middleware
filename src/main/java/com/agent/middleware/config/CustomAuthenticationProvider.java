@@ -1,9 +1,12 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.dto.SecurityToken;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.exception.ABException;
+import com.agent.middleware.util.CommonUtil;
 import com.bbl.servicepool.LimoSocketClient;
+import com.bbl.util.deviceInfo.HashGen;
 import com.bbl.util.model.CallingInfo;
 import com.bbl.util.model.DeviceInfo;
 import com.bbl.util.model.GenDataBlock;
@@ -11,7 +14,6 @@ import com.bbl.util.model.SocketPayload;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,6 +21,8 @@ import org.springframework.security.core.AuthenticationException;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -34,8 +38,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         socketRequestPayload.setCallingInfo(callingInfo);
 
         //2. Device Info
+
+        HashGen hashGen = HashGen.getInstance();
         DeviceInfo deviceInfo = DeviceInfo.getInstance();
         deviceInfo.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+        deviceInfo.setProcessorId("1234");
+        deviceInfo.setMacAddress("abcd");
+        deviceInfo.setBrowser("chrome");
+
+        deviceInfo.setDeviceHash(hashGen.getDeviceToken(deviceInfo.getIpAddress(),deviceInfo.getProcessorId(),
+                                                        deviceInfo.getMacAddress(),deviceInfo.getBrowser()));
         socketRequestPayload.setDeviceInfo(deviceInfo);
 
         //3. gen block
@@ -56,21 +68,41 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
 
-        System.out.println(socketPayloadResponse.getStatusBlock().getResponseCode());
+        log.info(socketPayloadResponse);
+
         if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
             UserInfo userInfo = new UserInfo();
             userInfo.setId(202);
             userInfo.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
             userInfo.setUserApplId(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
+            userInfo.setPrefLangCode(socketPayloadResponse.getGenDataBlock().getValueByKey("prefLangCode"));
             userInfo.setFullName(username);
-            userInfo.setRoles(Arrays.asList("USER","S_ADMIN"));
+            userInfo.setRoles(Arrays.asList("USER", "S_ADMIN"));
             userInfo.setUsername(username);
+            // Set Security Info
+            userInfo.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
+            userInfo.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
+            userInfo.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
+            userInfo.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
+
+            SecurityToken token = SecurityToken.getInstance();
+            token.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
+            token.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
+            token.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
+            token.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
+
+
             CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
             return customUserDetails;
-        } else {
-            log.info(socketPayloadResponse.getStatusBlock().getResponseMessage());
-            //throw new ABException.AuthenticationException(socketPayloadResponse.getStatusBlock().getResponseMessage());
+        } else if (socketPayloadResponse.getStatusBlock().
+                getResponseCode().equalsIgnoreCase("FAILURE")) {
+            if (socketPayloadResponse.getExceptionBlock() != null) {
+                List<Map> exceptionList = CommonUtil.getExceptionMap(socketPayloadResponse.getExceptionBlock().getHeaderInfo(),
+                        socketPayloadResponse.getExceptionBlock().getRecords());
+                throw new ABException.GeneralException(Integer.parseInt(exceptionList.get(0).get("errorCode").toString()),
+                        exceptionList.get(0).get("errorMessage").toString());
+            }
         }
         return null;
     }

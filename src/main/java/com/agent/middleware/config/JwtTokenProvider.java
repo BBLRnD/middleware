@@ -1,5 +1,6 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -67,13 +68,18 @@ public class JwtTokenProvider implements Serializable {
     }
 
     public String generateToken(Authentication authentication) {
-         String authorities = authentication.getAuthorities().stream()
+
+        UserInfo userInfo = (UserInfo) authentication.getPrincipal();
+
+        String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .claim("userApplId",userInfo.getUserApplId())
+                .claim("sessionId",userInfo.getSessionId())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
@@ -100,5 +106,9 @@ public class JwtTokenProvider implements Serializable {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    /*public DecodedJWT getDecodedJWT(String authToken){
+        return JWT.require(Algorithm.HMAC256(getSignKey())).build().verify(authToken);
+    }*/
 
 }

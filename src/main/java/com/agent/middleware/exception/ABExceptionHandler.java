@@ -82,4 +82,16 @@ public class ABExceptionHandler {
                 .description(request.getDescription(false))
                 .build();
     }
+
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ABException.GeneralException.class)
+    public ErrorMessageDto handleGeneralException(ABException.GeneralException ex, WebRequest request) {
+        log.error(ex.getMessage());
+        return ErrorMessageDto.builder().statusCode(ex.getCode())
+                .timestamp(new Date())
+                .message(ex.getMessage())
+                .description(request.getDescription(false))
+                .build();
+    }
 }
