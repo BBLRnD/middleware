@@ -43,6 +43,7 @@ dependencies {
 	implementation files('lib/LimoClientLib.jar')
 	implementation files('lib/socketmsgparser-1.7.jar')
 	implementation files('lib/ServiceClientPool.jar')
+	implementation files('lib/common-1.1.jar')
 
 }
 

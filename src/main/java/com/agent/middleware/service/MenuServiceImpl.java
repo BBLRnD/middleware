@@ -6,7 +6,7 @@ import com.agent.middleware.entity.Menu;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.enums.Module;
 import com.agent.middleware.repository.MenuRepository;
-import org.modelmapper.ModelMapper;
+import com.bbl.util.utils.ObjectMapperUtil;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,18 +14,15 @@ public class MenuServiceImpl implements MenuService {
 
     private final UserService userService;
     private final MenuRepository menuRepository;
-    private final ModelMapper modelMapper;
 
-    public MenuServiceImpl(UserService userService, MenuRepository menuRepository, ModelMapper modelMapper) {
+    public MenuServiceImpl(UserService userService, MenuRepository menuRepository) {
         this.userService = userService;
         this.menuRepository = menuRepository;
-        this.modelMapper = modelMapper;
     }
 
     @Override
     public void save(MenuDto menuDto) {
-        Menu menu = new Menu();
-        modelMapper.map(menuDto, menu);
+        Menu menu = ObjectMapperUtil.objectMap(menuDto, Menu.class);
         menu.setId(null);
         menuRepository.save(menu);
     }

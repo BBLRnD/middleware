@@ -1,7 +1,7 @@
 package com.agent.middleware.controller;
 
-import com.agent.middleware.dto.access_management.UserGroupDto;
-import com.agent.middleware.dto.access_management.UserGroupRoleDto;
+import com.agent.middleware.dto.accessmanagement.UserGroupDto;
+import com.agent.middleware.dto.accessmanagement.UserGroupRoleDto;
 import com.agent.middleware.entity.UserGroup;
 import com.agent.middleware.repository.UserGroupRepository;
 import com.agent.middleware.service.UserGroupRoleService;

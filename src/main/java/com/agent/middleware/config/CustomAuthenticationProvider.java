@@ -1,6 +1,5 @@
 package com.agent.middleware.config;
 
-import com.agent.middleware.dto.SecurityToken;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.exception.ABException;
@@ -75,24 +74,23 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             UserInfo userInfo = new UserInfo();
             userInfo.setId(202);
             userInfo.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
-            userInfo.setUserApplId(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
-            userInfo.setPrefLangCode(socketPayloadResponse.getGenDataBlock().getValueByKey("prefLangCode"));
+            userInfo.setUserApplId("1111");
+            userInfo.setPrefLangCode("BAN");
             userInfo.setFullName(username);
             userInfo.setRoles(Arrays.asList("USER", "S_ADMIN"));
             userInfo.setUsername(username);
+
             // Set Security Info
-            userInfo.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
-            userInfo.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
-            userInfo.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
-            userInfo.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
+//            userInfo.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
+//            userInfo.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
+//            userInfo.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
+//            userInfo.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
 
-            SecurityToken token = SecurityToken.getInstance();
-            token.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
-            token.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
-            token.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
-            token.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
-
-
+//            SecurityToken token = new SecurityToken();
+//            token.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
+//            token.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
+//            token.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
+//            token.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
             CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
             return customUserDetails;
         } else if (socketPayloadResponse.getStatusBlock().

@@ -1,4 +1,4 @@
-package com.agent.middleware.dto.access_management;
+package com.agent.middleware.dto.accessmanagement;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

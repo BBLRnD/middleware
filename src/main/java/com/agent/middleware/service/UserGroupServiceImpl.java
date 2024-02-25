@@ -1,6 +1,6 @@
 package com.agent.middleware.service;
 
-import com.agent.middleware.dto.access_management.UserGroupDto;
+import com.agent.middleware.dto.accessmanagement.UserGroupDto;
 import com.agent.middleware.entity.UserGroup;
 import com.agent.middleware.repository.UserGroupRepository;
 import org.springframework.stereotype.Service;

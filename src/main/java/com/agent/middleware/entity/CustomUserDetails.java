@@ -74,34 +74,16 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     public String getUserId() {return userId;}
 
     @Override
-    public void setUserId(String userId) {this.userId = userId;}
-
-    @Override
     public String getSessionId() {return sessionId;}
-
-    @Override
-    public void setSessionId(String sessionId) {this.sessionId = sessionId;}
 
     @Override
     public String getSecurityToken() {return securityToken;}
 
     @Override
-    public void setSecurityToken(String securityToken) {this.securityToken = securityToken;}
-
-    @Override
     public String getSaltValue() {return saltValue;}
 
     @Override
-    public void setSaltValue(String saltValue) {
-        this.saltValue = saltValue;
-    }
-
-    @Override
     public String getPrefLangCode() {return prefLangCode;}
-
-    @Override
-    public void setPrefLangCode(String prefLangCode) {this.prefLangCode = prefLangCode;}
-
 
     @Override
     public boolean isAccountNonExpired() {

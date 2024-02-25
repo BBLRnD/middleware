@@ -1,5 +1,9 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.dto.UserSession;
+import com.agent.middleware.entity.CustomUserDetails;
+import com.agent.middleware.entity.UserInfo;
+import com.bbl.util.utils.ObjectMapperUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,9 +30,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtAuthenticationFilter(UserDetailsService userDetailsService, JwtTokenProvider jwtTokenProvider) {
+    private UserSession userSession;
+
+    public JwtAuthenticationFilter(UserDetailsService userDetailsService, JwtTokenProvider jwtTokenProvider, UserSession userSession) {
         this.userDetailsService = userDetailsService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userSession = userSession;
     }
 
     @Override
@@ -38,22 +44,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String authToken = null;
         if (header != null && header.startsWith(TOKEN_PREFIX)) {
-            authToken = header.replace(TOKEN_PREFIX,"");
+            authToken = header.replace(TOKEN_PREFIX, "");
             try {
-                username = jwtTokenProvider.getUsernameFromToken(authToken);
+                userSession = jwtTokenProvider.getUsernameFromToken(authToken);
+                username = userSession.getUsername();
             } catch (IllegalArgumentException e) {
                 logger.error("An error occurred while fetching Username from Token", e);
             } catch (ExpiredJwtException e) {
                 logger.warn("The token has expired", e);
-            } catch(Exception e){
+            } catch (Exception e) {
                 logger.error("Authentication Failed. Username or Password not valid.");
             }
         } else {
             logger.warn("Couldn't find bearer string, header will be ignored");
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserInfo userInfo = ObjectMapperUtil.objectMap(userSession, UserInfo.class);
+            CustomUserDetails userDetails = new CustomUserDetails(userInfo);
 
             if (jwtTokenProvider.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = jwtTokenProvider

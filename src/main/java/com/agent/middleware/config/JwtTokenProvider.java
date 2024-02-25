@@ -1,7 +1,7 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.dto.UserSession;
 import com.agent.middleware.entity.UserInfo;
-import com.agent.middleware.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,12 +20,12 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider implements Serializable {
-    private final UserService userService;
+
+    private UserSession userSession;
 
     @Value("${jwt.token.validity}")
     public long JWT_TOKEN_VALIDITY;
@@ -36,21 +36,28 @@ public class JwtTokenProvider implements Serializable {
     @Value("${jwt.authorities.key}")
     public String AUTHORITIES_KEY;
 
-    public JwtTokenProvider(UserService userService) {
-        this.userService = userService;
+    public JwtTokenProvider(UserSession userSession) {
+        this.userSession = userSession;
     }
 
-    public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+    public UserSession getUsernameFromToken(String token) {
+        return getClaimFromToken(token);
     }
 
     public Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
+        return getClaimFromToken(token).getClaims().getExpiration();
     }
 
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claimsResolver.apply(claims);
+    public UserSession getClaimFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        userSession.setUsername(claims.get("username").toString());
+        userSession.setModules(claims.get("modules").toString());
+        userSession.setFullName(claims.get("fullName").toString());
+        userSession.setPrefLangCode(claims.get("prefLanguageCode").toString());
+        userSession.setUserApplId(claims.get("userApplId").toString());
+        userSession.setRoles(Arrays.stream(claims.get("roles").toString().split(",")).toList());
+        userSession.setClaims(claims);
+        return userSession;
     }
 
     private Claims getAllClaimsFromToken(String token) {
@@ -78,8 +85,11 @@ public class JwtTokenProvider implements Serializable {
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
-                .claim("userApplId",userInfo.getUserApplId())
-                .claim("sessionId",userInfo.getSessionId())
+                .claim("username", userInfo.getUsername())
+                .claim("fullName", userInfo.getFullName())
+                .claim("modules", userInfo.getModules())
+                .claim("userApplId", userInfo.getUserApplId())
+                .claim("prefLanguageCode", userInfo.getPrefLangCode())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
@@ -87,7 +97,7 @@ public class JwtTokenProvider implements Serializable {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
+        final String username = getUsernameFromToken(token).getUsername();
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 

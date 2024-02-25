@@ -1,5 +1,6 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.dto.UserSession;
 import com.agent.middleware.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +25,12 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, UserService userService) {
+    private UserSession userSession;
+
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, UserService userService, UserSession userSession) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userSession = userSession;
     }
 
     @Bean
@@ -55,6 +59,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter authenticationTokenFilterBean() {
-        return new JwtAuthenticationFilter(userService, jwtTokenProvider);
+        return new JwtAuthenticationFilter(userService, jwtTokenProvider, userSession);
     }
 }

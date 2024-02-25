@@ -1,6 +1,5 @@
 package com.agent.middleware.repository;
 
-import com.agent.middleware.dto.SecurityToken;
 import com.agent.middleware.dto.menu.MenuDto;
 import com.agent.middleware.dto.menu.MenuResponseDto;
 import com.agent.middleware.entity.Menu;
@@ -55,12 +54,12 @@ public class MenuRepositoryImpl implements MenuRepository{
 
         SecurityInfo securityInfo = SecurityInfo.getInstance();
         // need to make dynamic
-        SecurityToken token1 = SecurityToken.getInstance();
-        securityInfo.setUserId(token1.getUserId());
-        securityInfo.setSessionId(token1.getSessionId());
-        securityInfo.setSecurityToken(token1.getSecurityToken());
-        securityInfo.setSaltValue(token1.getSaltValue());
-        socketRequestPayload.setSecurityInfo(securityInfo);
+//        SecurityToken token1 = SecurityToken.getInstance();
+//        securityInfo.setUserId(token1.getUserId());
+//        securityInfo.setSessionId(token1.getSessionId());
+//        securityInfo.setSecurityToken(token1.getSecurityToken());
+//        securityInfo.setSaltValue(token1.getSaltValue());
+//        socketRequestPayload.setSecurityInfo(securityInfo);
 
         //3. gen block
         GenDataBlock genDataBlock = GenDataBlock.getInstance();
@@ -112,29 +111,27 @@ public class MenuRepositoryImpl implements MenuRepository{
             menuDto.setModule(module);
             menuDto.setParentId(strings[header.get("parentMenuId")]);
             menuDto.setRole("ROLE_USER");
-            switch (Integer.parseInt(strings[header.get("level")])){
-                case 1 : {
+            switch (Integer.parseInt(strings[header.get("level")])) {
+                case 1 -> {
                     menuDto.setHasChildren(true);
                     menuDto.setLayer(0);
                     menuDto.setType(MenuType.parent);
                     layerZero.add(menuDto);
-                    break;
                 }
-                case 2 : {
+                case 2 -> {
                     menuDto.setHasChildren(true);
                     menuDto.setLayer(1);
                     menuDto.setType(MenuType.group);
                     layerOne.add(menuDto);
-                    break;
                 }
-                case 3: {
+                case 3 -> {
                     menuDto.setHasChildren(false);
                     menuDto.setType(MenuType.component);
                     menuDto.setLayer(2);
                     layerTwo.add(menuDto);
-                    break;
                 }
-                default: break;
+                default -> {
+                }
             }
 
 

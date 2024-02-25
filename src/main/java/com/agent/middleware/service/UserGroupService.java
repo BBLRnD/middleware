@@ -1,7 +1,6 @@
 package com.agent.middleware.service;
 
-import com.agent.middleware.dto.RoleDto;
-import com.agent.middleware.dto.access_management.UserGroupDto;
+import com.agent.middleware.dto.accessmanagement.UserGroupDto;
 import com.agent.middleware.entity.UserGroup;
 
 import java.util.List;
