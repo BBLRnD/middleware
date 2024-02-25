@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface MenuRepository {
     Menu save(Menu menu);
-    MenuResponseDto findAllByModule(Module module, UserInfo userInfo);
+    MenuResponseDto findAllByModule(Module module);
 }

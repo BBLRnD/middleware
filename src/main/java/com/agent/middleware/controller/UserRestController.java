@@ -65,9 +65,10 @@ public class UserRestController {
             System.out.println(e.getMessage());
             System.err.println("Decryption error: " + e.getMessage());
         }
+        //userLoginDto.setIsForced(true);
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
-                        userLoginDto.getPassword()));
+                        userLoginDto));
         if (authentication.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             final String jwtToken = jwtTokenProvider.generateToken(authentication);

@@ -10,7 +10,7 @@ public interface RefreshTokenRepository {
 
     void delete(RefreshToken refreshToken);
 
-    void delete(UserInfo userInfo);
+    void delete();
 
     RefreshToken save(RefreshToken refreshToken);
 }

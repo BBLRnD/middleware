@@ -1,9 +1,9 @@
 package com.agent.middleware.repository;
 
+import com.agent.middleware.dto.UserSession;
 import com.agent.middleware.dto.menu.MenuDto;
 import com.agent.middleware.dto.menu.MenuResponseDto;
 import com.agent.middleware.entity.Menu;
-import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.enums.MenuType;
 import com.agent.middleware.enums.Module;
 import com.agent.middleware.util.CommonUtil;
@@ -23,6 +23,12 @@ import java.util.Map;
 @Component
 public class MenuRepositoryImpl implements MenuRepository{
 
+    private final UserSession userSession;
+
+    public MenuRepositoryImpl(UserSession userSession) {
+        this.userSession = userSession;
+    }
+
     @Override
     public Menu save(Menu menu) {
         return null;
@@ -30,8 +36,7 @@ public class MenuRepositoryImpl implements MenuRepository{
 
     @SneakyThrows
     @Override
-    public MenuResponseDto findAllByModule(Module module, UserInfo userInfo) {
-
+    public MenuResponseDto findAllByModule(Module module) {
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
         CallingInfo callingInfo = CallingInfo.getInstance();
@@ -53,6 +58,11 @@ public class MenuRepositoryImpl implements MenuRepository{
 
 
         SecurityInfo securityInfo = SecurityInfo.getInstance();
+        securityInfo.setSecurityToken(userSession.getSecurityToken());
+        securityInfo.setUserId(userSession.getUserId());
+        securityInfo.setSaltValue(userSession.getSaltValue());
+        securityInfo.setSessionId(userSession.getSessionId());
+        socketRequestPayload.setSecurityInfo(securityInfo);
         // need to make dynamic
 //        SecurityToken token1 = SecurityToken.getInstance();
 //        securityInfo.setUserId(token1.getUserId());
@@ -65,8 +75,8 @@ public class MenuRepositoryImpl implements MenuRepository{
         GenDataBlock genDataBlock = GenDataBlock.getInstance();
         HashMap<String, String> formData = new HashMap<>();
         // need to make dynamic
-        formData.put("applId",userInfo.getUserApplId());
-        formData.put("prefLangCode",userInfo.getPrefLangCode());
+        formData.put("applId",userSession.getUserApplId());
+        formData.put("prefLangCode",userSession.getPrefLangCode());
         genDataBlock.setFormData(formData);
         socketRequestPayload.setGenDataBlock(genDataBlock);
 

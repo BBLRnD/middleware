@@ -29,7 +29,6 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuResponseDto getAllByModule(Module module) {
-        UserInfo userInfo = userService.getLoggedInUser();
-        return menuRepository.findAllByModule(module, userInfo);
+        return menuRepository.findAllByModule(module);
     }
 }

@@ -48,13 +48,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     public void deleteRefreshToken(RefreshToken refreshToken) {
-        UserInfo userInfo = userService.getLoggedInUser();
         refreshTokenRepository.delete(refreshToken);
     }
 
     public void deleteRefreshToken() {
-        UserInfo userInfo = userService.getLoggedInUser();
-        refreshTokenRepository.delete(userInfo);
+        refreshTokenRepository.delete();
     }
 
 }

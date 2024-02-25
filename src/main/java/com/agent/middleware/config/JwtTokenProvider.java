@@ -55,6 +55,10 @@ public class JwtTokenProvider implements Serializable {
         userSession.setFullName(claims.get("fullName").toString());
         userSession.setPrefLangCode(claims.get("prefLanguageCode").toString());
         userSession.setUserApplId(claims.get("userApplId").toString());
+        userSession.setUserId(claims.get("userId").toString());
+        userSession.setSessionId(claims.get("sessionId").toString());
+        userSession.setSecurityToken(claims.get("securityToken").toString());
+        userSession.setSaltValue(claims.get("saltValue").toString());
         userSession.setRoles(Arrays.stream(claims.get("roles").toString().split(",")).toList());
         userSession.setClaims(claims);
         return userSession;
@@ -90,6 +94,10 @@ public class JwtTokenProvider implements Serializable {
                 .claim("modules", userInfo.getModules())
                 .claim("userApplId", userInfo.getUserApplId())
                 .claim("prefLanguageCode", userInfo.getPrefLangCode())
+                .claim("sessionId", userInfo.getSessionId())
+                .claim("userId", userInfo.getUserId())
+                .claim("saltValue", userInfo.getSaltValue())
+                .claim("securityToken", userInfo.getSecurityToken())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)

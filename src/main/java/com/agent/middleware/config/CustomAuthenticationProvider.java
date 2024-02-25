@@ -1,5 +1,6 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.exception.ABException;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @SneakyThrows
-    CustomUserDetails isValidUser(String username, String password) {
+    CustomUserDetails isValidUser(UserLoginDto loginDto) {
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
         CallingInfo callingInfo = CallingInfo.getInstance();
@@ -52,8 +53,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         //3. gen block
         GenDataBlock genDataBlock = GenDataBlock.getInstance();
         HashMap<String, String> formData = new HashMap<>();
-        formData.put("loginId", username);
-        formData.put("loginKey", password);
+        formData.put("loginId", loginDto.getUsername());
+        formData.put("loginKey", loginDto.getPassword());
+        if(loginDto.getIsForced()!=null && loginDto.getIsForced()){
+            formData.put("forceLoginFlg","Y");
+        }
         genDataBlock.setFormData(formData);
         socketRequestPayload.setGenDataBlock(genDataBlock);
 
@@ -74,17 +78,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             UserInfo userInfo = new UserInfo();
             userInfo.setId(202);
             userInfo.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
-            userInfo.setUserApplId("1111");
-            userInfo.setPrefLangCode("BAN");
-            userInfo.setFullName(username);
+            userInfo.setUserApplId(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
+            userInfo.setPrefLangCode(socketPayloadResponse.getGenDataBlock().getValueByKey("prefLangCode"));
+            userInfo.setFullName(loginDto.getUsername());
             userInfo.setRoles(Arrays.asList("USER", "S_ADMIN"));
-            userInfo.setUsername(username);
+            userInfo.setUsername(loginDto.getUsername());
 
             // Set Security Info
-//            userInfo.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
-//            userInfo.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
-//            userInfo.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
-//            userInfo.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
+            userInfo.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
+            userInfo.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
+            userInfo.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
+            userInfo.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
 
 //            SecurityToken token = new SecurityToken();
 //            token.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
@@ -108,9 +112,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
-        String password = authentication.getCredentials().toString();
-
-        CustomUserDetails customUserDetails = isValidUser(username, password);
+        UserLoginDto userLoginDto =(UserLoginDto) authentication.getCredentials();
+        System.out.println(userLoginDto.getIsForced());
+        CustomUserDetails customUserDetails = isValidUser(userLoginDto);
         if (customUserDetails != null) {
             return new UsernamePasswordAuthenticationToken(
                     customUserDetails,
