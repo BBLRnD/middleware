@@ -34,6 +34,16 @@ public class UserInfo implements UserDetails {
     // user prefered Language Code
     private String prefLangCode;
 
+    private String deviceInoSuc;
+    private String loginTimeSuc;
+    private String loginIpSuc;
+    private String locationInfoSuc;
+    private String loginIpFai;
+    private String loginTimeFai;
+    private String deviceInoFai;
+    private String locationInfoFai;
+    private String newUserFlg;
+
     private List<String> roles;
 
     @Override
