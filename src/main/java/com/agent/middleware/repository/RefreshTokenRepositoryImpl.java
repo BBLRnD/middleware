@@ -24,7 +24,34 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     }
 
     @Override
+    @SneakyThrows
     public Optional<RefreshToken> findByToken(String token) {
+        CallingInfo callingInfo = CallingInfo.getInstance();
+        callingInfo.setVersionInfo("1.0.0");
+        callingInfo.setFuncCode("M");
+        callingInfo.setFuncCode("GetRefreshToken");
+        SocketPayload socketPayload = SocketPayload.getInstance();
+
+        HashGen hashGen = HashGen.getInstance();
+        DeviceInfo deviceInfo = DeviceInfo.getInstance();
+        deviceInfo.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+        deviceInfo.setProcessorId("1234");
+        deviceInfo.setMacAddress("abcd");
+        deviceInfo.setBrowser("chrome");
+
+        deviceInfo.setDeviceHash(hashGen.getDeviceToken(deviceInfo.getIpAddress(), deviceInfo.getProcessorId(),
+                deviceInfo.getMacAddress(), deviceInfo.getBrowser()));
+        socketPayload.setDeviceInfo(deviceInfo);
+        GenDataBlock genDataBlock = GenDataBlock.getInstance();
+        Map<String, String> formData = new HashMap<>();
+        formData.put("refreshToken", token);
+        genDataBlock.setFormData(formData);
+        socketPayload.setGenDataBlock(genDataBlock);
+        LimoSocketClient locLimoSocketClient = new LimoSocketClient();
+        String toReceive = locLimoSocketClient.processRequest(socketPayload.toString());
+        SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
+
+
         return Optional.empty();
     }
 
