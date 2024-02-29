@@ -10,7 +10,6 @@ import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.exception.ABException;
 import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
-import com.bbl.util.model.DeviceInfo;
 import com.bbl.util.utils.DecryptUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,15 +34,13 @@ public class UserRestController {
     @Value("${spring.datasource.privateKeyString}")
     private String privateKeyString;
     private final UserService userService;
-    private final DeviceInfo deviceInfo;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
 
-    public UserRestController(UserService userService, DeviceInfo deviceInfo, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
+    public UserRestController(UserService userService, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.userService = userService;
-        this.deviceInfo = deviceInfo;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.refreshTokenService = refreshTokenService;
@@ -79,6 +76,9 @@ public class UserRestController {
             UserInfo userInfo = (UserInfo) authentication.getPrincipal();
             jwtResponseDto.setFullName(userInfo.getFullName());
             jwtResponseDto.setModules(Collections.singleton(userInfo.getModules()));
+            jwtResponseDto.setLoginTimeSuc(userInfo.getLoginTimeSuc());
+            jwtResponseDto.setLoginIpSuc(userInfo.getLoginIpSuc());
+            jwtResponseDto.setPrefLangCode(userInfo.getPrefLangCode());
             return jwtResponseDto;
         } else {
             throw new ABException.AuthenticationException("Invalid User/Password !!");

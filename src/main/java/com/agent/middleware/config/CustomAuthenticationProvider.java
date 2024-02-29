@@ -90,11 +90,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             userInfo.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
             userInfo.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
 
-//            SecurityToken token = new SecurityToken();
-//            token.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
-//            token.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
-//            token.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
-//            token.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
+            userInfo.setDeviceInoSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("deviceInoSuc"));
+            userInfo.setLoginTimeSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("loginTimeSuc"));
+            userInfo.setLoginIpSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("loginIpSuc"));
+            userInfo.setLocationInfoSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("locationInfoSuc"));
+            userInfo.setNewUserFlg(socketPayloadResponse.getGenDataBlock().getValueByKey("newUserFlg"));
+
             CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
             return customUserDetails;
         } else if (socketPayloadResponse.getStatusBlock().

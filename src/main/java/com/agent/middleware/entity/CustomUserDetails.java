@@ -22,6 +22,16 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     private String securityToken;
     private String saltValue;
     private String prefLangCode;
+
+    private String deviceInoSuc;
+    private String loginTimeSuc;
+    private String loginIpSuc;
+    private String locationInfoSuc;
+    private String loginIpFai;
+    private String loginTimeFai;
+    private String deviceInoFai;
+    private String locationInfoFai;
+    private String newUserFlg;
     private List<String> roles;
     Collection<? extends GrantedAuthority> authorities;
 
@@ -39,6 +49,12 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
         this.saltValue = byUsername.getSaltValue();
         // pref Language Code
         this.prefLangCode = byUsername.getPrefLangCode();
+        // Login Success/failure information
+        this.deviceInoSuc = byUsername.getDeviceInoSuc();
+        this.loginTimeSuc = byUsername.getLoginTimeSuc();
+        this.loginIpSuc = byUsername.getLoginIpSuc();
+        this.locationInfoSuc = byUsername.getLocationInfoSuc();
+        this.newUserFlg = byUsername.getNewUserFlg();
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         for (String role : roles) {
@@ -84,6 +100,58 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
 
     @Override
     public String getPrefLangCode() {return prefLangCode;}
+
+    @Override
+    public String getDeviceInoSuc() {return deviceInoSuc;}
+    @Override
+    public void setDeviceInoSuc(String deviceInoSuc) {this.deviceInoSuc = deviceInoSuc;}
+    @Override
+    public String getLoginTimeSuc() {return loginTimeSuc;}
+
+    @Override
+    public void setLoginTimeSuc(String loginTimeSuc) {this.loginTimeSuc = loginTimeSuc;}
+
+    @Override
+    public String getLoginIpSuc() {return loginIpSuc;}
+
+    @Override
+    public void setLoginIpSuc(String loginIpSuc) {this.loginIpSuc = loginIpSuc;}
+
+    @Override
+    public String getLocationInfoSuc() {return locationInfoSuc;}
+
+    @Override
+    public void setLocationInfoSuc(String locationInfoSuc) {this.locationInfoSuc = locationInfoSuc;}
+
+    @Override
+    public String getLoginIpFai() {return loginIpFai;}
+
+    @Override
+    public void setLoginIpFai(String loginIpFai) {this.loginIpFai = loginIpFai;}
+
+    @Override
+    public String getLoginTimeFai() {return loginTimeFai;}
+
+    @Override
+    public void setLoginTimeFai(String loginTimeFai) {this.loginTimeFai = loginTimeFai;}
+
+    @Override
+    public String getDeviceInoFai() {return deviceInoFai;}
+
+    @Override
+    public void setDeviceInoFai(String deviceInoFai) {this.deviceInoFai = deviceInoFai;}
+
+    @Override
+    public String getLocationInfoFai() {return locationInfoFai;}
+
+    @Override
+    public void setLocationInfoFai(String locationInfoFai) {this.locationInfoFai = locationInfoFai;}
+
+    @Override
+    public String getNewUserFlg() {return newUserFlg;}
+
+    @Override
+    public void setNewUserFlg(String newUserFlg) {this.newUserFlg = newUserFlg;}
 
     @Override
     public boolean isAccountNonExpired() {
