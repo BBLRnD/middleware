@@ -41,7 +41,7 @@ dependencies {
 	implementation group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.12.2'
 	implementation 'com.lowagie:itext:2.1.7'
 	implementation files('lib/LimoClientLib.jar')
-	implementation files('lib/socketmsgparser-1.9.jar')
+	implementation files('lib/socketmsgparser-2.0.jar')
 	implementation files('lib/ServiceClientPool.jar')
 	implementation files('lib/common-1.1.jar')
 

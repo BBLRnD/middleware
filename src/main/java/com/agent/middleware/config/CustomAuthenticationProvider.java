@@ -4,7 +4,6 @@ import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.exception.ABException;
-import com.agent.middleware.util.CommonUtil;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.deviceInfo.HashGen;
 import com.bbl.util.model.CallingInfo;
@@ -100,12 +99,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             return customUserDetails;
         } else if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("FAILURE")) {
-            if (socketPayloadResponse.getExceptionBlock() != null) {
-                List<Map> exceptionList = CommonUtil.getExceptionMap(socketPayloadResponse.getExceptionBlock().getHeaderInfo(),
-                        socketPayloadResponse.getExceptionBlock().getRecords());
-                throw new ABException.GeneralException(Integer.parseInt(exceptionList.get(0).get("errorCode").toString()),
-                        exceptionList.get(0).get("errorMessage").toString());
-            }
+            throw new ABException.GeneralException(Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()),
+                    socketPayloadResponse.getStatusBlock().getResponseMessage());
         }
         return null;
     }

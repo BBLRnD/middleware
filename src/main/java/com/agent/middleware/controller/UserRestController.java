@@ -79,6 +79,7 @@ public class UserRestController {
             jwtResponseDto.setLoginTimeSuc(userInfo.getLoginTimeSuc());
             jwtResponseDto.setLoginIpSuc(userInfo.getLoginIpSuc());
             jwtResponseDto.setPrefLangCode(userInfo.getPrefLangCode());
+            jwtResponseDto.setNewUserFlg(userInfo.getNewUserFlg());
             return jwtResponseDto;
         } else {
             throw new ABException.AuthenticationException("Invalid User/Password !!");

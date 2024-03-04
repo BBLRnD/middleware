@@ -16,4 +16,5 @@ public class JwtResponseDto {
     private String loginTimeSuc;
     private String loginIpSuc;
     private String prefLangCode;
+    private String newUserFlg;
 }
