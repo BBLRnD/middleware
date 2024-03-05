@@ -1,6 +1,7 @@
 package com.agent.middleware.controller;
 
 
+import com.agent.middleware.constants.ServiceNameConstant;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.model.CallingInfo;
 import com.bbl.util.model.GenDataBlock;
@@ -30,7 +31,7 @@ public class TestRestController {
         CallingInfo callingInfo = CallingInfo.getInstance();
         callingInfo.setVersionInfo("1.0.0");
         callingInfo.setFuncCode("M");
-        callingInfo.setServiceName("DoLogin");
+        callingInfo.setServiceName(ServiceNameConstant.LOGIN);
         socketRequestPayload.setCallingInfo(callingInfo);
 
 

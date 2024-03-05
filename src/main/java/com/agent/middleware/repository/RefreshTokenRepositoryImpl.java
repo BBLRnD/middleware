@@ -1,5 +1,6 @@
 package com.agent.middleware.repository;
 
+import com.agent.middleware.constants.ServiceNameConstant;
 import com.agent.middleware.dto.UserSession;
 import com.agent.middleware.entity.RefreshToken;
 import com.bbl.servicepool.LimoSocketClient;
@@ -67,7 +68,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
         CallingInfo callingInfo = CallingInfo.getInstance();
         callingInfo.setVersionInfo("1.0.0");
         callingInfo.setFuncCode("M");
-        callingInfo.setServiceName("DoLogout");
+        callingInfo.setServiceName(ServiceNameConstant.LOGOUT);
         socketRequestPayload.setCallingInfo(callingInfo);
 
         // device info
