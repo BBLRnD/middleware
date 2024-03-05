@@ -1,5 +1,6 @@
 package com.agent.middleware.repository;
 
+import com.agent.middleware.constants.ServiceNameConstant;
 import com.agent.middleware.dto.UserSession;
 import com.agent.middleware.dto.menu.MenuDto;
 import com.agent.middleware.dto.menu.MenuResponseDto;
@@ -43,7 +44,7 @@ public class MenuRepositoryImpl implements MenuRepository{
         CallingInfo callingInfo = CallingInfo.getInstance();
         callingInfo.setVersionInfo("1.0.0");
         callingInfo.setFuncCode("M");
-        callingInfo.setServiceName("GetMenuTree");
+        callingInfo.setServiceName(ServiceNameConstant.MENU_TREE);
         socketRequestPayload.setCallingInfo(callingInfo);
 
         HashGen hashGen = HashGen.getInstance();

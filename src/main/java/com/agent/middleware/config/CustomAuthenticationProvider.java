@@ -1,5 +1,6 @@
 package com.agent.middleware.config;
 
+import com.agent.middleware.constants.ServiceNameConstant;
 import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
@@ -33,7 +34,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         CallingInfo callingInfo = CallingInfo.getInstance();
         callingInfo.setVersionInfo("1.0.0");
         callingInfo.setFuncCode("M");
-        callingInfo.setServiceName("DoLogin");
+        callingInfo.setServiceName(ServiceNameConstant.LOGIN);
         socketRequestPayload.setCallingInfo(callingInfo);
 
         //2. Device Info
