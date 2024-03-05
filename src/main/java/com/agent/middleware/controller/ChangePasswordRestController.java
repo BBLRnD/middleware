@@ -22,12 +22,10 @@ public class ChangePasswordRestController {
     @PostMapping("/public/password-change")
     public ChangePasswordResponseDto changePassword(@RequestBody ChangePasswordDto changePasswordDto){
         ChangePasswordResponseDto changePasswordResponseDto = new ChangePasswordResponseDto();
-        if (changePasswordService.validateChangePasswordDto(changePasswordDto)) {
-            changePasswordResponseDto.setStatusCode("200");
-            changePasswordResponseDto.setMessage("Password Change successful");
-        } else {
+        if (!changePasswordService.validateChangePasswordDto(changePasswordDto)) {
             changePasswordResponseDto.setStatusCode("400");
             changePasswordResponseDto.setMessage("Invalid input");
+            return changePasswordResponseDto;
         }
         return changePasswordService.savePassword(changePasswordDto);
     }
