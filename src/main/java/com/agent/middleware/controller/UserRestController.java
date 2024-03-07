@@ -7,7 +7,7 @@ import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.dto.UserRegisterDto;
 import com.agent.middleware.entity.RefreshToken;
 import com.agent.middleware.entity.UserInfo;
-import com.agent.middleware.exception.ABException;
+import com.agent.middleware.exception.AuthenticationException;
 import com.agent.middleware.service.RefreshTokenService;
 import com.agent.middleware.service.UserService;
 import com.bbl.util.utils.DecryptUtil;
@@ -82,15 +82,10 @@ public class UserRestController {
             jwtResponseDto.setNewUserFlg(userInfo.getNewUserFlg());
             return jwtResponseDto;
         } else {
-            throw new ABException.AuthenticationException("Invalid User/Password !!");
+            throw new AuthenticationException("Invalid Username/Password !!!");
         }
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @PostMapping("/public/force-login")
-    public HttpStatus forceLogIn() {
-        return HttpStatus.OK;
-    }
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/refresh-token")

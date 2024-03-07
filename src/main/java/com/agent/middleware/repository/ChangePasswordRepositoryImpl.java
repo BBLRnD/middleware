@@ -1,14 +1,16 @@
 package com.agent.middleware.repository;
+
 import com.agent.middleware.constants.ServiceNameConstant;
 import com.agent.middleware.dto.ChangePasswordDto;
 import com.agent.middleware.dto.ChangePasswordResponseDto;
 import com.agent.middleware.dto.UserSession;
-import com.agent.middleware.exception.ABException;
+import com.agent.middleware.exception.SocketResponseException;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.deviceInfo.HashGen;
 import com.bbl.util.model.*;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+
 import java.net.InetAddress;
 import java.util.HashMap;
 
@@ -79,7 +81,8 @@ public class ChangePasswordRepositoryImpl implements ChangePasswordRepository {
             changePasswordResponseDto.setMessage(socketPayloadResponse.getStatusBlock().getResponseMessage());
             return changePasswordResponseDto;
         }else{
-            throw new ABException.GeneralException(-2,socketPayloadResponse.getStatusBlock().getResponseMessage());
+            throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
+                    Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()));
         }
     }
 }

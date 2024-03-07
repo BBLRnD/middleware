@@ -4,7 +4,8 @@ import com.agent.middleware.constants.ServiceNameConstant;
 import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.entity.CustomUserDetails;
 import com.agent.middleware.entity.UserInfo;
-import com.agent.middleware.exception.ABException;
+import com.agent.middleware.exception.AuthenticationException;
+import com.agent.middleware.exception.SocketResponseException;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.deviceInfo.HashGen;
 import com.bbl.util.model.CallingInfo;
@@ -16,13 +17,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Log4j2
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -100,15 +98,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             return customUserDetails;
         } else if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("FAILURE")) {
-            throw new ABException.GeneralException(Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()),
-                    socketPayloadResponse.getStatusBlock().getResponseMessage());
+            throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
+                    Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()));
         }
         return null;
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+    public Authentication authenticate(Authentication authentication) {
         UserLoginDto userLoginDto =(UserLoginDto) authentication.getCredentials();
         System.out.println(userLoginDto.getIsForced());
         CustomUserDetails customUserDetails = isValidUser(userLoginDto);
@@ -118,7 +115,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                     null,
                     customUserDetails.getAuthorities());
         } else {
-            throw new ABException.AuthenticationException("Invalid User/Password !!");
+            throw new AuthenticationException("Invalid User/Password !!");
         }
     }
 

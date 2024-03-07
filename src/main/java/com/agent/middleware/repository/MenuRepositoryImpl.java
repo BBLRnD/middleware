@@ -7,7 +7,7 @@ import com.agent.middleware.dto.menu.MenuResponseDto;
 import com.agent.middleware.entity.Menu;
 import com.agent.middleware.enums.MenuType;
 import com.agent.middleware.enums.Module;
-import com.agent.middleware.exception.ABException;
+import com.agent.middleware.exception.SocketResponseException;
 import com.agent.middleware.util.CommonUtil;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.deviceInfo.HashGen;
@@ -100,8 +100,8 @@ public class MenuRepositoryImpl implements MenuRepository{
             menuResponseDto = getMenus(socketPayloadResponse.getListBlock(), module);
             return menuResponseDto;
         }else{
-            throw new ABException.GeneralException(Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()),
-                    socketPayloadResponse.getStatusBlock().getResponseMessage());
+            throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
+                    Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()));
         }
     }
 
