@@ -8,6 +8,6 @@ import java.util.Date;
 @Data
 @Builder
 public class ErrorMessageDto {
-    private int errorCode;
+    private String errorCode;
     private String message;
 }

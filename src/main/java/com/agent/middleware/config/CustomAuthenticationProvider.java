@@ -44,8 +44,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         deviceInfo.setMacAddress("abcd");
         deviceInfo.setBrowser("chrome");
 
-        deviceInfo.setDeviceHash(hashGen.getDeviceToken(deviceInfo.getIpAddress(),deviceInfo.getProcessorId(),
-                                                        deviceInfo.getMacAddress(),deviceInfo.getBrowser()));
+        deviceInfo.setDeviceHash(hashGen.getDeviceToken(deviceInfo.getIpAddress(), deviceInfo.getProcessorId(),
+                deviceInfo.getMacAddress(), deviceInfo.getBrowser()));
         socketRequestPayload.setDeviceInfo(deviceInfo);
 
         //3. gen block
@@ -53,8 +53,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         HashMap<String, String> formData = new HashMap<>();
         formData.put("loginId", loginDto.getUsername());
         formData.put("loginKey", loginDto.getPassword());
-        if(loginDto.getIsForced()!=null && loginDto.getIsForced()){
-            formData.put("forceLoginFlg","Y");
+        if (loginDto.getIsForced() != null && loginDto.getIsForced()) {
+            formData.put("forceLoginFlg", "Y");
         }
         genDataBlock.setFormData(formData);
         socketRequestPayload.setGenDataBlock(genDataBlock);
@@ -99,14 +99,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         } else if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("FAILURE")) {
             throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
-                    Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()));
+                    socketPayloadResponse.getStatusBlock().getErrorCode());
         }
         return null;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) {
-        UserLoginDto userLoginDto =(UserLoginDto) authentication.getCredentials();
+        UserLoginDto userLoginDto = (UserLoginDto) authentication.getCredentials();
         System.out.println(userLoginDto.getIsForced());
         CustomUserDetails customUserDetails = isValidUser(userLoginDto);
         if (customUserDetails != null) {
