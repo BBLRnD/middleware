@@ -72,8 +72,6 @@ public class ChangePasswordRepositoryImpl implements ChangePasswordRepository {
         String toReceive = locLimoSocketClient.processRequest(payloadAsString);
         SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
 
-        System.out.println(socketPayloadResponse);
-
         System.out.println(socketPayloadResponse.getStatusBlock().getResponseCode());
         if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
@@ -82,7 +80,7 @@ public class ChangePasswordRepositoryImpl implements ChangePasswordRepository {
             return changePasswordResponseDto;
         }else{
             throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
-                    Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()));
+                    socketPayloadResponse.getStatusBlock().getErrorCode());
         }
     }
 }

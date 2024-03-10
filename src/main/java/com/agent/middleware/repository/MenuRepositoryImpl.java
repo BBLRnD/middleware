@@ -101,7 +101,7 @@ public class MenuRepositoryImpl implements MenuRepository{
             return menuResponseDto;
         }else{
             throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
-                    Integer.parseInt(socketPayloadResponse.getStatusBlock().getErrorCode()));
+                    socketPayloadResponse.getStatusBlock().getErrorCode());
         }
     }
 
