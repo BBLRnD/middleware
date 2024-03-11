@@ -13,6 +13,8 @@ import com.agent.middleware.service.UserService;
 import com.bbl.util.utils.DecryptUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/v1")
+@Api(tags="User Opes")
 public class UserRestController {
     @Value("${spring.datasource.privateKeyString}")
     private String privateKeyString;
@@ -54,6 +57,7 @@ public class UserRestController {
         return HttpStatus.OK;
     }
 
+    @ApiOperation(value = "Get User Desc",notes = "Receive user Dts")
     @PostMapping(value = "/public/login")
     public JwtResponseDto login(@RequestBody UserLoginDto userLoginDto) {
         try {
