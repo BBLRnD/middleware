@@ -44,6 +44,7 @@ dependencies {
 	implementation files('lib/socketmsgparser-2.1.jar')
 	implementation files('lib/ServiceClientPool.jar')
 	implementation files('lib/common-1.1.jar')
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
 }
 
