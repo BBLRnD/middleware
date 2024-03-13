@@ -31,11 +31,29 @@ public class MenuRestController {
     }
 
 
-    @PreAuthorize("hasRole('USER')")
+    /*@PreAuthorize("hasRole('USER')")
     @GetMapping("/menu/{module}")
-    public MenuResponseDto getByUserType(@PathVariable("module") String modulePath) {
+    public MenuResponseDto getMenuByUserType(@PathVariable("module") String modulePath) {
         System.out.println(userSession);
         Module module = Module.getModuleByPath(modulePath);
-        return menuService.getAllByModule(module);
+        return menuService.getAllByModule(module,null);
+    }*/
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/menu")
+    public MenuResponseDto getMenuBy(@RequestParam("modulePath") String modulePath,
+                                     @RequestParam("langCode") String langCode) {
+        System.out.println(userSession);
+        Module module = Module.getModuleByPath(modulePath);
+        return menuService.getAllByModule(module,langCode);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/menu/get-by-langCode")
+    public MenuResponseDto getMenuByLangCode(@RequestParam("modulePath") String modulePath,
+                                             @RequestParam("langCode") String langCode) {
+        System.out.println(modulePath+" "+langCode);
+        Module module = Module.getModuleByPath(modulePath);
+        return menuService.getAllByModule(module,langCode);
     }
 }

@@ -38,7 +38,8 @@ public class MenuRepositoryImpl implements MenuRepository{
 
     @SneakyThrows
     @Override
-    public MenuResponseDto findAllByModule(Module module) {
+    public MenuResponseDto findAllByModule(Module module,String langCode) {
+        System.out.println("language code "+langCode);
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
         CallingInfo callingInfo = CallingInfo.getInstance();
@@ -65,20 +66,16 @@ public class MenuRepositoryImpl implements MenuRepository{
         securityInfo.setSaltValue(userSession.getSaltValue());
         securityInfo.setSessionId(userSession.getSessionId());
         socketRequestPayload.setSecurityInfo(securityInfo);
-        // need to make dynamic
-//        SecurityToken token1 = SecurityToken.getInstance();
-//        securityInfo.setUserId(token1.getUserId());
-//        securityInfo.setSessionId(token1.getSessionId());
-//        securityInfo.setSecurityToken(token1.getSecurityToken());
-//        securityInfo.setSaltValue(token1.getSaltValue());
-//        socketRequestPayload.setSecurityInfo(securityInfo);
 
         //3. gen block
         GenDataBlock genDataBlock = GenDataBlock.getInstance();
         HashMap<String, String> formData = new HashMap<>();
         // need to make dynamic
         formData.put("applId",userSession.getUserApplId());
-        formData.put("prefLangCode",userSession.getPrefLangCode());
+        if(langCode != null)
+            formData.put("prefLangCode",langCode);
+        else
+            formData.put("prefLangCode",userSession.getPrefLangCode());
         genDataBlock.setFormData(formData);
         socketRequestPayload.setGenDataBlock(genDataBlock);
 
