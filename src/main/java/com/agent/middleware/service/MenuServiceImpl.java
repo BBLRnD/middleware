@@ -28,7 +28,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuResponseDto getAllByModule(Module module) {
-        return menuRepository.findAllByModule(module);
+    public MenuResponseDto getAllByModule(Module module,String langCode) {
+        return menuRepository.findAllByModule(module,langCode);
     }
 }
