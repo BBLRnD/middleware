@@ -2,8 +2,7 @@ package com.agent.middleware.config;
 
 import com.agent.middleware.constants.ServiceNameConstant;
 import com.agent.middleware.dto.UserLoginDto;
-import com.agent.middleware.entity.CustomUserDetails;
-import com.agent.middleware.entity.UserInfo;
+import com.agent.middleware.dto.UserSession;
 import com.agent.middleware.exception.AuthenticationException;
 import com.agent.middleware.exception.SocketResponseException;
 import com.bbl.servicepool.LimoSocketClient;
@@ -17,16 +16,25 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @Log4j2
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
+    private final UserSession userSession;
+
+    public CustomAuthenticationProvider(UserSession userSession) {
+        this.userSession = userSession;
+    }
+
     @SneakyThrows
-    CustomUserDetails isValidUser(UserLoginDto loginDto) {
+    Boolean isValidUser(UserLoginDto loginDto) {
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
         CallingInfo callingInfo = CallingInfo.getInstance();
@@ -73,47 +81,42 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
-            UserInfo userInfo = new UserInfo();
-            userInfo.setId(202);
-            userInfo.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
-            userInfo.setUserApplId(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
-            userInfo.setPrefLangCode(socketPayloadResponse.getGenDataBlock().getValueByKey("prefLangCode"));
-            userInfo.setFullName(loginDto.getUsername());
-            userInfo.setRoles(Arrays.asList("USER", "S_ADMIN"));
-            userInfo.setUsername(loginDto.getUsername());
+            userSession.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
+            userSession.setUserApplId(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
+            userSession.setPrefLangCode(socketPayloadResponse.getGenDataBlock().getValueByKey("prefLangCode"));
+            userSession.setFullName(loginDto.getUsername());
+            userSession.setRoles(Arrays.asList("USER"));
+            userSession.setUsername(loginDto.getUsername());
 
             // Set Security Info
-            userInfo.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
-            userInfo.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
-            userInfo.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
-            userInfo.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
-
-            userInfo.setDeviceInoSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("deviceInoSuc"));
-            userInfo.setLoginTimeSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("loginTimeSuc"));
-            userInfo.setLoginIpSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("loginIpSuc"));
-            userInfo.setLocationInfoSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("locationInfoSuc"));
-            userInfo.setNewUserFlg(socketPayloadResponse.getGenDataBlock().getValueByKey("newUserFlg"));
-
-            CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
-            return customUserDetails;
+            userSession.setUserId(socketPayloadResponse.getSecurityInfo().getUserId());
+            userSession.setSessionId(socketPayloadResponse.getSecurityInfo().getSessionId());
+            userSession.setSecurityToken(socketPayloadResponse.getSecurityInfo().getSecurityToken());
+            userSession.setSaltValue(socketPayloadResponse.getSecurityInfo().getSaltValue());
+            userSession.setLoginTimeSuc(socketPayloadResponse.getGenDataBlock().getValueByKey("loginTimeSuc"));
+            userSession.setLoginTimeFai(socketPayloadResponse.getGenDataBlock().getValueByKey("loginTimeFai"));
+//            CustomUserDetails customUserDetails = new CustomUserDetails(userInfo);
+            return true;
         } else if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("FAILURE")) {
             throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
                     socketPayloadResponse.getStatusBlock().getErrorCode());
         }
-        return null;
+        return false;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) {
         UserLoginDto userLoginDto = (UserLoginDto) authentication.getCredentials();
-        System.out.println(userLoginDto.getIsForced());
-        CustomUserDetails customUserDetails = isValidUser(userLoginDto);
-        if (customUserDetails != null) {
+        if (isValidUser(userLoginDto)) {
+            Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+            for (String role : userSession.getRoles()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            }
             return new UsernamePasswordAuthenticationToken(
-                    customUserDetails,
+                    userSession,
                     null,
-                    customUserDetails.getAuthorities());
+                    authorities);
         } else {
             throw new AuthenticationException("Invalid User/Password !!");
         }

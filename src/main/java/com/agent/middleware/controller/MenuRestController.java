@@ -23,7 +23,7 @@ public class MenuRestController {
         this.userSession = userSession;
     }
 
-    @PreAuthorize("hasRole('S_ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/menu")
     public HttpStatus save(@RequestBody MenuDto menuDto) {
         menuService.save(menuDto);

@@ -1,35 +1,33 @@
 package com.agent.middleware.controller;
 
-import com.agent.middleware.entity.Report;
-import com.agent.middleware.repository.ReportRepository;
 import com.agent.middleware.service.ReportService;
 import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
 public class ReportRestController {
 
-    @Autowired
-    private ReportRepository reportRepository;
+    private final ReportService reportService;
 
-    @Autowired
-    private ReportService reportService;
-
-    @GetMapping("/get-reports")
-    public List<Report> getReports() {
-        List<Report> reports = (List<Report>) reportRepository.findAll();
-        return reports;
+    public ReportRestController(ReportService reportService) {
+        this.reportService = reportService;
     }
+//
+//    @GetMapping("/get-reports")
+//    public List<Report> getReports() {
+//        List<Report> reports = (List<Report>) reportRepository.findAll();
+//        return reports;
+//    }
 
     @GetMapping("/public/pdf-report")
     public void createPDF(

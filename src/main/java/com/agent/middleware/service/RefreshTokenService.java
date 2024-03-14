@@ -1,5 +1,6 @@
 package com.agent.middleware.service;
 
+import com.agent.middleware.dto.RefreshTokenRequestDto;
 import com.agent.middleware.entity.RefreshToken;
 
 public interface RefreshTokenService {
@@ -10,7 +11,6 @@ public interface RefreshTokenService {
 
     RefreshToken verifyExpiration(RefreshToken token);
 
-    void deleteRefreshToken(RefreshToken refreshToken);
+    void deleteRefreshToken(RefreshTokenRequestDto refreshToken);
 
-    void deleteRefreshToken();
 }
