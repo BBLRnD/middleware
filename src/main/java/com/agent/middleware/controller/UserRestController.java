@@ -6,13 +6,9 @@ import com.agent.middleware.dto.RefreshTokenRequestDto;
 import com.agent.middleware.dto.UserLoginDto;
 import com.agent.middleware.dto.UserRegisterDto;
 import com.agent.middleware.entity.RefreshToken;
-import com.agent.middleware.entity.UserInfo;
 import com.agent.middleware.exception.AuthenticationException;
 import com.agent.middleware.service.RefreshTokenService;
-import com.agent.middleware.service.UserService;
 import com.bbl.util.utils.DecryptUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -26,32 +22,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-
 @RestController
 @RequestMapping("/api/v1")
 public class UserRestController {
     @Value("${spring.datasource.privateKeyString}")
     private String privateKeyString;
-    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
 
-    public UserRestController(UserService userService, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
-        this.userService = userService;
+    public UserRestController( AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.refreshTokenService = refreshTokenService;
-    }
-
-
-    @PostMapping(value = "/public/register")
-    @SneakyThrows
-    public HttpStatus register(@RequestBody UserRegisterDto userRequestDto) {
-        userService.register(userRequestDto);
-        return HttpStatus.OK;
     }
 
     @PostMapping(value = "/public/login")
@@ -62,7 +46,6 @@ public class UserRestController {
             System.out.println(e.getMessage());
             System.err.println("Decryption error: " + e.getMessage());
         }
-        //userLoginDto.setIsForced(true);
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(),
                         userLoginDto));
@@ -73,13 +56,6 @@ public class UserRestController {
             JwtResponseDto jwtResponseDto = new JwtResponseDto();
             jwtResponseDto.setJwtToken(jwtToken);
             jwtResponseDto.setRefreshToken(refreshToken.getToken());
-            UserInfo userInfo = (UserInfo) authentication.getPrincipal();
-            jwtResponseDto.setFullName(userInfo.getFullName());
-            jwtResponseDto.setModules(Collections.singleton(userInfo.getModules()));
-            jwtResponseDto.setLoginTimeSuc(userInfo.getLoginTimeSuc());
-            jwtResponseDto.setLoginIpSuc(userInfo.getLoginIpSuc());
-            jwtResponseDto.setPrefLangCode(userInfo.getPrefLangCode());
-            jwtResponseDto.setNewUserFlg(userInfo.getNewUserFlg());
             return jwtResponseDto;
         } else {
             throw new AuthenticationException("Invalid Username/Password !!!");
@@ -93,22 +69,22 @@ public class UserRestController {
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
 //        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.getRefreshToken());
 //        refreshTokenService.verifyExpiration(refreshToken);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String jwtToken = jwtTokenProvider.generateToken(authentication);
         JwtResponseDto jwtResponseDto = new JwtResponseDto();
         jwtResponseDto.setJwtToken(jwtToken);
         jwtResponseDto.setRefreshToken(refreshTokenRequestDTO.getRefreshToken());
-        UserInfo userInfo = (UserInfo) authentication.getPrincipal();
-        jwtResponseDto.setFullName(userInfo.getFullName());
-        jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {
-        }));
+//        UserInfo userInfo = (UserInfo) authentication.getPrincipal();
+//        jwtResponseDto.setFullName(userInfo.getFullName());
+//        jwtResponseDto.setModules(new ObjectMapper().readValue(userInfo.getModules(), new TypeReference<>() {
+//        }));
         return jwtResponseDto;
     }
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/user/revoke-token")
-    public HttpStatus logout(@RequestBody RefreshTokenRequestDto refreshTokenRequestDTO) {
-        refreshTokenService.deleteRefreshToken();
+    public HttpStatus logout(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
+        refreshTokenService.deleteRefreshToken(refreshTokenRequestDto);
         return HttpStatus.OK;
     }
 }

@@ -1,7 +1,6 @@
 package com.agent.middleware.config;
 
 import com.agent.middleware.dto.UserSession;
-import com.agent.middleware.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,15 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-
-    private final UserService userService;
-
     private final JwtTokenProvider jwtTokenProvider;
 
     private UserSession userSession;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, UserService userService, UserSession userSession) {
-        this.userService = userService;
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider,  UserSession userSession) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userSession = userSession;
     }
@@ -47,7 +42,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider();
+        CustomAuthenticationProvider authenticationProvider = new CustomAuthenticationProvider(userSession);
         return authenticationProvider;
 
     }
@@ -59,6 +54,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter authenticationTokenFilterBean() {
-        return new JwtAuthenticationFilter(userService, jwtTokenProvider, userSession);
+        return new JwtAuthenticationFilter(jwtTokenProvider, userSession);
     }
 }

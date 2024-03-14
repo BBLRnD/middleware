@@ -1,9 +1,6 @@
 package com.agent.middleware.config;
 
 import com.agent.middleware.dto.UserSession;
-import com.agent.middleware.entity.CustomUserDetails;
-import com.agent.middleware.entity.UserInfo;
-import com.bbl.util.utils.ObjectMapperUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,12 +8,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -26,14 +28,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Value("${jwt.token.prefix}")
     public String TOKEN_PREFIX;
 
-    private final UserDetailsService userDetailsService;
 
     private final JwtTokenProvider jwtTokenProvider;
 
     private UserSession userSession;
 
-    public JwtAuthenticationFilter(UserDetailsService userDetailsService, JwtTokenProvider jwtTokenProvider, UserSession userSession) {
-        this.userDetailsService = userDetailsService;
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserSession userSession) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userSession = userSession;
     }
@@ -42,13 +42,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         //allowCrossOrigin(req,res);
         String header = req.getHeader(HEADER_STRING);
-        String username = null;
-        String authToken = null;
+        String authToken;
         if (header != null && header.startsWith(TOKEN_PREFIX)) {
             authToken = header.replace(TOKEN_PREFIX, "");
             try {
-                userSession = jwtTokenProvider.getUsernameFromToken(authToken);
-                username = userSession.getUsername();
+                userSession = jwtTokenProvider.getClaimFromToken(authToken);
+                if (jwtTokenProvider.isTokenExpired(userSession.getExpirationDate())) {
+                    logger.error("Jwt Token has Expired");
+                    throw new AuthenticationException("Authentication failed");
+                }else{
+                    final Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(userSession.getRoles().toArray(new String[0]))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userSession, "", authorities);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             } catch (IllegalArgumentException e) {
                 logger.error("An error occurred while fetching Username from Token", e);
             } catch (ExpiredJwtException e) {
@@ -59,28 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else {
             logger.warn("Couldn't find bearer string, header will be ignored");
         }
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserInfo userInfo = ObjectMapperUtil.objectMap(userSession, UserInfo.class);
-            CustomUserDetails userDetails = new CustomUserDetails(userInfo);
-
-            if (jwtTokenProvider.validateToken(authToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication = jwtTokenProvider
-                        .getAuthenticationToken(authToken, SecurityContextHolder.getContext().getAuthentication(), userDetails);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-                logger.info("authenticated user " + username + ", setting security context");
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        }
-
         chain.doFilter(req, res);
-    }
-
-    private void allowCrossOrigin(HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin","*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token, Origin");
-        response.addHeader("Access-Control-Expose-Headers", "xsrf-token");
-        if ("OPTIONS".equals(request.getMethod())) response.setStatus(HttpServletResponse.SC_OK);
     }
 }
