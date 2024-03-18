@@ -13,9 +13,9 @@ import java.net.InetAddress;
 import java.util.HashMap;
 
 @Service
-public class RefCTypeMaintServiceImpl implements RefCTypeMaintService{
+public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenanceService {
     private final UserSession userSession;
-    public RefCTypeMaintServiceImpl(UserSession userSession) {
+    public RefCodeTypeMaintenanceServiceImpl(UserSession userSession) {
         this.userSession = userSession;
     }
     @SneakyThrows
@@ -27,7 +27,6 @@ public class RefCTypeMaintServiceImpl implements RefCTypeMaintService{
         callingInfo.setVersionInfo("1.0.0");
         callingInfo.setFuncCode(functionCode);
         callingInfo.setServiceName(ServiceNameConstant.FETCH_REFCODE_TYPE_LIST);
-        callingInfo.setMenuId("");
         socketRequestPayload.setCallingInfo(callingInfo);
 
         HashGen hashGen = HashGen.getInstance();
