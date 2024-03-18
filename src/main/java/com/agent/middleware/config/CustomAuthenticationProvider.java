@@ -41,6 +41,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         callingInfo.setVersionInfo("1.0.0");
         callingInfo.setFuncCode("M");
         callingInfo.setServiceName(ServiceNameConstant.LOGIN);
+        callingInfo.setMenuId("");
         socketRequestPayload.setCallingInfo(callingInfo);
 
         //2. Device Info
@@ -81,7 +82,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
-            userSession.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\"]");
+            userSession.setModules("[\"OPERATIONS\", \"ACCESS_CONTROL\",\"CCONF\"]");
             userSession.setUserApplId(socketPayloadResponse.getGenDataBlock().getValueByKey("applId"));
             userSession.setPrefLangCode(socketPayloadResponse.getGenDataBlock().getValueByKey("prefLangCode"));
             userSession.setFullName(loginDto.getUsername());
