@@ -27,6 +27,7 @@ public class RefCTypeMaintServiceImpl implements RefCTypeMaintService{
         callingInfo.setVersionInfo("1.0.0");
         callingInfo.setFuncCode(functionCode);
         callingInfo.setServiceName(ServiceNameConstant.FETCH_REFCODE_TYPE_LIST);
+        callingInfo.setMenuId("");
         socketRequestPayload.setCallingInfo(callingInfo);
 
         HashGen hashGen = HashGen.getInstance();
@@ -42,16 +43,10 @@ public class RefCTypeMaintServiceImpl implements RefCTypeMaintService{
 
 
         SecurityInfo securityInfo = SecurityInfo.getInstance();
-        /*securityInfo.setSecurityToken(userSession.getSecurityToken());
+        securityInfo.setSecurityToken(userSession.getSecurityToken());
         securityInfo.setUserId(userSession.getUserId());
         securityInfo.setSaltValue(userSession.getSaltValue());
         securityInfo.setSessionId(userSession.getSessionId());
-        socketRequestPayload.setSecurityInfo(securityInfo);*/
-
-        securityInfo.setSecurityToken("26473581496357315785772377991849451718");
-        securityInfo.setUserId("UTTAM2057");
-        securityInfo.setSaltValue("}HPtnAux");
-        securityInfo.setSessionId("O:1752");
         socketRequestPayload.setSecurityInfo(securityInfo);
 
 
@@ -60,6 +55,8 @@ public class RefCTypeMaintServiceImpl implements RefCTypeMaintService{
         HashMap<String, String> criteriaData = new HashMap<>();
         // need to make dynamic
         criteriaData.put("refCodeTypeDesc",refTypeOrDsc);
+        criteriaData.put("numOfRecsPerPage","10");
+        criteriaData.put("pageNum","1");
         criteriaBlock.setCriteriaData(criteriaData);
         socketRequestPayload.setCriteriaBlock(criteriaBlock);
         String payloadAsString = socketRequestPayload.toString();
@@ -69,6 +66,7 @@ public class RefCTypeMaintServiceImpl implements RefCTypeMaintService{
         // Socket Communication with app
         LimoSocketClient locLimoSocketClient = new LimoSocketClient();
         String toReceive = locLimoSocketClient.processRequest(payloadAsString);
+        System.out.println(toReceive);
         SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
 
         System.out.println(socketPayloadResponse);
@@ -77,10 +75,10 @@ public class RefCTypeMaintServiceImpl implements RefCTypeMaintService{
 
         if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
+            return socketPayloadResponse.getListBlock();
         }else{
             throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
                     socketPayloadResponse.getStatusBlock().getErrorCode());
         }
-        return socketPayloadResponse.getListBlock();
     }
 }
