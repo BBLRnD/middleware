@@ -3,6 +3,7 @@ package com.agent.middleware.controller;
 import com.agent.middleware.dto.CriteriaFormDto;
 import com.agent.middleware.service.RefCodeTypeMaintenanceService;
 import com.bbl.util.model.ListBlock;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,8 +13,8 @@ public class RefCodeTypeMaintenanceController {
     public RefCodeTypeMaintenanceController(RefCodeTypeMaintenanceService refCodeTypeMaintenanceService) {
         this.refCodeTypeMaintenanceService = refCodeTypeMaintenanceService;
     }
-    //@PreAuthorize("hasRole('USER')")
-    @PostMapping("/public/get-refType-list")
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/get-refType-list")
     public ListBlock getRefCodeTypeList(@RequestBody CriteriaFormDto criteriaFormDto) {
         System.out.println(criteriaFormDto);
         return refCodeTypeMaintenanceService.getRefCodeTypeList(criteriaFormDto.getFunCode(),criteriaFormDto.getRefTypeOrDsc());
