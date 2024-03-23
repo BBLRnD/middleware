@@ -9,6 +9,7 @@ import com.agent.middleware.enums.MenuType;
 import com.agent.middleware.enums.Module;
 import com.agent.middleware.exception.SocketResponseException;
 import com.agent.middleware.util.CommonUtil;
+import com.agent.middleware.util.UnicodeConverterUtil;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.deviceInfo.HashGen;
 import com.bbl.util.model.*;
@@ -119,7 +120,7 @@ public class MenuServiceImpl implements MenuService {
             menuDto.setId(strings[header.get("menuId")]);
             menuDto.setComponent(strings[header.get("param1")]);
             menuDto.setIcon("");
-            menuDto.setTitle(StringEscapeUtils.unescapeJava(strings[header.get("menuDesc")]));
+            menuDto.setTitle(UnicodeConverterUtil.convertUniToText(strings[header.get("menuDesc")]));
             menuDto.setModule(module);
             menuDto.setParentId(strings[header.get("parentMenuId")]);
             menuDto.setRole("ROLE_USER");
