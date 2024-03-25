@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class RefCodeTypeMaintenanceDto {
     private String functionCode;
     private String refCodeType;
+    private String newRefCodeType;
     private String refCodeTypeDesc;
-    private String deleteFlg;
     private String lchgTime;
     private String dependentFlg;
     private String dependentRefCodeType;

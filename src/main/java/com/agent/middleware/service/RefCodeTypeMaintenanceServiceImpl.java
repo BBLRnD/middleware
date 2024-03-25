@@ -8,7 +8,6 @@ import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.deviceInfo.HashGen;
 import com.bbl.util.model.*;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -22,7 +21,7 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
     }
 
     @Override
-    public HttpStatus save(RefCodeTypeMaintenanceDto refTypeDto) {
+    public StatusBlock save(RefCodeTypeMaintenanceDto refTypeDto) {
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
         CallingInfo callingInfo = CallingInfo.getInstance();
@@ -38,10 +37,9 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
         socketRequestPayload.setSecurityInfo(getSocketSecurityInfoPayload());
 
         GenDataBlock genDataBlock = GenDataBlock.getInstance();
-
         HashMap<String, String> formData = new HashMap<>();
+
         formData.put("refCodeTypeDesc",refTypeDto.getRefCodeTypeDesc());
-        formData.put("delFlg",refTypeDto.getDeleteFlg());
         formData.put("lchgTime",refTypeDto.getLchgTime());
         formData.put("depFlg",refTypeDto.getDependentFlg());
         formData.put("depRefCodeType",refTypeDto.getDependentRefCodeType());
@@ -53,7 +51,11 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
 
         CriteriaBlock criteriaBlock = CriteriaBlock.getInstance();
         HashMap<String, String> criteriaData = new HashMap<>();
+
         criteriaData.put("refCodeType",refTypeDto.getRefCodeType());
+        if(refTypeDto.getFunctionCode().equalsIgnoreCase("C"))
+            criteriaData.put("refCodeTypeNew",refTypeDto.getNewRefCodeType());
+
         criteriaBlock.setCriteriaData(criteriaData);
         socketRequestPayload.setCriteriaBlock(criteriaBlock);
         String payloadAsString = socketRequestPayload.toString();
@@ -65,7 +67,7 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
         System.out.println(socketPayloadResponse);
         if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
-            return HttpStatus.OK;
+            return socketPayloadResponse.getStatusBlock();
         }else{
             throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
                     socketPayloadResponse.getStatusBlock().getErrorCode());
@@ -91,7 +93,6 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
         //3. gen block
         CriteriaBlock criteriaBlock = CriteriaBlock.getInstance();
         HashMap<String, String> criteriaData = new HashMap<>();
-        // need to make dynamic
         criteriaData.put("refCodeType",refCodeType);
         criteriaBlock.setCriteriaData(criteriaData);
         socketRequestPayload.setCriteriaBlock(criteriaBlock);
@@ -104,7 +105,6 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
         String toReceive = locLimoSocketClient.processRequest(payloadAsString);
         System.out.println(toReceive);
         SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
-        System.out.println(socketPayloadResponse);
 
         System.out.println(socketPayloadResponse.getStatusBlock().getResponseCode());
         if (socketPayloadResponse.getStatusBlock().

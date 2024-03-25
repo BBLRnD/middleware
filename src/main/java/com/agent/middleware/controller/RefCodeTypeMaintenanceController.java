@@ -4,7 +4,7 @@ import com.agent.middleware.dto.RefCodeTypeMaintenanceDto;
 import com.agent.middleware.service.RefCodeTypeMaintenanceService;
 import com.bbl.util.model.GenDataBlock;
 import com.bbl.util.model.ListBlock;
-import org.springframework.http.HttpStatus;
+import com.bbl.util.model.StatusBlock;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,6 @@ public class RefCodeTypeMaintenanceController {
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/get-refType-list")
     public ListBlock getRefCodeTypeList(@RequestBody RefCodeTypeMaintenanceDto dto) {
-        System.out.println(dto);
         return refCodeTypeMaintenanceService.getRefCodeTypeList(dto.getFunctionCode(),dto.getRefCodeType());
     }
 
@@ -30,7 +29,7 @@ public class RefCodeTypeMaintenanceController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/submit")
-    public HttpStatus submit(@RequestBody RefCodeTypeMaintenanceDto dto) {
+    public StatusBlock submit(@RequestBody RefCodeTypeMaintenanceDto dto) {
         return refCodeTypeMaintenanceService.save(dto);
     }
 }
