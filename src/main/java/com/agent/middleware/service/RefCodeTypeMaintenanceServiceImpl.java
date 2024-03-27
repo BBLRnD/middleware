@@ -1,8 +1,8 @@
 package com.agent.middleware.service;
 
 import com.agent.middleware.constants.ServiceNameConstant;
-import com.agent.middleware.dto.RefCodeTypeMaintenanceDto;
 import com.agent.middleware.dto.UserSession;
+import com.agent.middleware.dto.coreconfig.RefTypeMaintenanceDto;
 import com.agent.middleware.exception.SocketResponseException;
 import com.bbl.servicepool.LimoSocketClient;
 import com.bbl.util.deviceInfo.HashGen;
@@ -21,7 +21,7 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
     }
 
     @Override
-    public StatusBlock save(RefCodeTypeMaintenanceDto refTypeDto) {
+    public StatusBlock save(RefTypeMaintenanceDto refTypeDto) {
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
         CallingInfo callingInfo = CallingInfo.getInstance();
@@ -117,12 +117,12 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
 
     }
     @Override
-    public ListBlock getRefCodeTypeList(String functionCode,String refTypeOrDsc) {
+    public ListBlock getRefTypeList(RefTypeMaintenanceDto refTypeMaintenanceDto) {
         SocketPayload socketRequestPayload = SocketPayload.getInstance();
         //1. calling info
         CallingInfo callingInfo = CallingInfo.getInstance();
         callingInfo.setVersionInfo("1.0.0");
-        callingInfo.setFuncCode(functionCode);
+        callingInfo.setFuncCode(refTypeMaintenanceDto.getFunctionCode());
         callingInfo.setServiceName(ServiceNameConstant.FETCH_REFCODE_TYPE_LIST);
         socketRequestPayload.setCallingInfo(callingInfo);
 
@@ -134,10 +134,9 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
         //3. gen block
         CriteriaBlock criteriaBlock = CriteriaBlock.getInstance();
         HashMap<String, String> criteriaData = new HashMap<>();
-        // need to make dynamic
-        criteriaData.put("refCodeTypeDesc",refTypeOrDsc);
-        criteriaData.put("numOfRecsPerPage","10");
-        criteriaData.put("pageNum","1");
+        criteriaData.put("refCodeTypeDesc",refTypeMaintenanceDto.getRefCodeType());
+        criteriaData.put("numOfRecsPerPage",refTypeMaintenanceDto.getNumOfRecsPerPage());
+        criteriaData.put("pageNum",refTypeMaintenanceDto.getPageNum());
         criteriaBlock.setCriteriaData(criteriaData);
         socketRequestPayload.setCriteriaBlock(criteriaBlock);
         String payloadAsString = socketRequestPayload.toString();
@@ -146,16 +145,28 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
 
         // Socket Communication with app
         LimoSocketClient locLimoSocketClient = new LimoSocketClient();
-        String toReceive = locLimoSocketClient.processRequest(payloadAsString);
-        System.out.println(toReceive);
+        //String toReceive = locLimoSocketClient.processRequest(payloadAsString);
+        String toReceive;
+        if(refTypeMaintenanceDto.getPageNum().equalsIgnoreCase("1")){
+            toReceive = "[statusBlock=[responseCode=SUCCESS|errorCode=0|responseMessage=Reference Type Data]]~~" +
+                    "[listBlock=[numberOfRecs=3][headerInfo=refCodeType|refCodeTypeDesc]" +
+                    "[message=Total 3 Records Found][curPageNum=1][maxPageNum=1]" +
+                    "[dataBlocks=01|APPLICATION ID~02|LANGUAGE CODE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE]]";
+        }else{
+            toReceive = "[callingInfo=[serviceName=FetchRefCodeTypeList|versionInfo=1.0.0|funcCode=M]]~~" +
+                    "[statusBlock=[responseCode=SUCCESS|errorCode=0|responseMessage=Reference Type Data]]~~" +
+                    "[listBlock=[numberOfRecs=1][headerInfo=refCodeType|refCodeTypeDesc]" +
+                    "[message=Total 3 Records Found][curPageNum=2][maxPageNum=1]" +
+                    "[dataBlocks=20|APPLICATION ID~02|APPLICATION ID]]";
+        }
+
         SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
 
         System.out.println(socketPayloadResponse);
 
-        System.out.println(socketPayloadResponse.getStatusBlock().getResponseCode());
-
         if (socketPayloadResponse.getStatusBlock().
                 getResponseCode().equalsIgnoreCase("SUCCESS")) {
+
             return socketPayloadResponse.getListBlock();
         }else{
             throw new SocketResponseException(socketPayloadResponse.getStatusBlock().getResponseMessage(),
