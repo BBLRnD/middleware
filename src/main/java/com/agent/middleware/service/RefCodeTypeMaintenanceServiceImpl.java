@@ -134,8 +134,8 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
         //3. gen block
         CriteriaBlock criteriaBlock = CriteriaBlock.getInstance();
         HashMap<String, String> criteriaData = new HashMap<>();
-        criteriaData.put("refCodeTypeDesc",refTypeMaintenanceDto.getRefCodeType());
-        criteriaData.put("numOfRecsPerPage",refTypeMaintenanceDto.getNumOfRecsPerPage());
+        criteriaData.put("refCodeTypeDesc",refTypeMaintenanceDto.getRefCodeType()==null?"":refTypeMaintenanceDto.getRefCodeType());
+        criteriaData.put("numOfRecsPerPage" ,refTypeMaintenanceDto.getNumOfRecsPerPage());
         criteriaData.put("pageNum",refTypeMaintenanceDto.getPageNum());
         criteriaBlock.setCriteriaData(criteriaData);
         socketRequestPayload.setCriteriaBlock(criteriaBlock);
@@ -145,21 +145,7 @@ public class RefCodeTypeMaintenanceServiceImpl implements RefCodeTypeMaintenance
 
         // Socket Communication with app
         LimoSocketClient locLimoSocketClient = new LimoSocketClient();
-        //String toReceive = locLimoSocketClient.processRequest(payloadAsString);
-        String toReceive;
-        if(refTypeMaintenanceDto.getPageNum().equalsIgnoreCase("1")){
-            toReceive = "[statusBlock=[responseCode=SUCCESS|errorCode=0|responseMessage=Reference Type Data]]~~" +
-                    "[listBlock=[numberOfRecs=3][headerInfo=refCodeType|refCodeTypeDesc]" +
-                    "[message=Total 3 Records Found][curPageNum=1][maxPageNum=1]" +
-                    "[dataBlocks=01|APPLICATION ID~02|LANGUAGE CODE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE~03|APPLICATION MODULE]]";
-        }else{
-            toReceive = "[callingInfo=[serviceName=FetchRefCodeTypeList|versionInfo=1.0.0|funcCode=M]]~~" +
-                    "[statusBlock=[responseCode=SUCCESS|errorCode=0|responseMessage=Reference Type Data]]~~" +
-                    "[listBlock=[numberOfRecs=1][headerInfo=refCodeType|refCodeTypeDesc]" +
-                    "[message=Total 3 Records Found][curPageNum=2][maxPageNum=1]" +
-                    "[dataBlocks=20|APPLICATION ID~02|APPLICATION ID]]";
-        }
-
+        String toReceive = locLimoSocketClient.processRequest(payloadAsString);
         SocketPayload socketPayloadResponse = SocketPayload.getInstance().toObject(toReceive);
 
         System.out.println(socketPayloadResponse);
