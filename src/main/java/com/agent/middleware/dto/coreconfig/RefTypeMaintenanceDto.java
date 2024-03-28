@@ -1,4 +1,4 @@
-package com.agent.middleware.dto;
+package com.agent.middleware.dto.coreconfig;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RefCodeTypeMaintenanceDto {
+public class RefTypeMaintenanceDto {
     private String functionCode;
     private String refCodeType;
     private String newRefCodeType;
@@ -18,4 +18,8 @@ public class RefCodeTypeMaintenanceDto {
     private String depRefCodeTypeDesc;
     private String refCodeLength;
     private String menuId;
+
+    // for list/grid pagination
+    private String numOfRecsPerPage;
+    private String pageNum;
 }
